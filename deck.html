@@ -1090,11 +1090,14 @@
     var moves = JSON.stringify(SLIDES[prev].region()) !== JSON.stringify(SLIDES[idx].region());
     var turns = PAGES_AT[prev] !== PAGES_AT[idx];
     var leavingBook = (SLIDES[prev].book || 0) > 0 && !(SLIDES[idx].book > 0);
+    // Title→MetLife (and any first page-turn while relocating): turn BEFORE the camera flies,
+    // otherwise we land on page 2's crop while page 1 is still on top.
+    var firstPageTurn = PAGES_AT[prev] === 0 && PAGES_AT[idx] > 0;
     var TURN_MS = 760, camDelay = 0, pageDelay = 0;
     if (turns && moves) {
-      // Leaving the photo book: turn to the next paper page BEFORE flying back,
+      // Also: leaving the photo book — turn to the next paper page BEFORE flying back,
       // otherwise the camera lands on slide/page 2 and only then reveals section 3.
-      if (prev === 0 || prev === SLIDES.length - 1 || leavingBook) {
+      if (firstPageTurn || leavingBook) {
         camDelay = TURN_MS;
       } else {
         pageDelay = flightMs(idx) + 40; // camera first, then turn at the pile
