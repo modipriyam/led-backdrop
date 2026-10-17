@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Factors Affecting Success Beyond Talent and Opportunity</title>
 <style>
-  :root { --desk: #c4a273; --loading: #5a4630; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --desk: #2f281f; --loading: #cbb79a; } }
-  :root[data-theme="dark"] { --desk: #2f281f; --loading: #cbb79a; }
-  :root[data-theme="light"] { --desk: #c4a273; --loading: #5a4630; }
+  /* Prior deck desk colors; page art stays as authored (no photo filters). */
+  :root { --desk: #1a2230; --loading: #9AA1AB; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  :root[data-theme="dark"] { --desk: #7A808A; --loading: #D0D8E6; }
+  :root[data-theme="light"] { --desk: #1a2230; --loading: #9AA1AB; }
   html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
   body { margin: 0; height: 100%; overflow: hidden; background: var(--desk); font-family: Cambria, "Noto Serif", Georgia, serif; -webkit-user-select: none; user-select: none; }
   body.idle { cursor: none; }
@@ -79,45 +79,14 @@
     pages.concat(leaves).forEach(function (it) { it.K = it.tex.width / it.w; });
   }
 
-  // ---------------------------------------------------------------- theme (paper dark / light)
+  // ---------------------------------------------------------------- theme
+  // Prior DOM deck: dark paper (#1A1F28) + light ink (#F4F7FC); photos were separate and never filtered.
+  // Page JPEGs bake both, so dark mode remaps only paper/ink outside photo regions.
   function isDarkTheme() {
     return document.documentElement.getAttribute("data-theme") !== "light";
   }
-  function deskColor() { return isDarkTheme() ? "#2f281f" : "#c4a273"; }
-  function pageBackColor() { return isDarkTheme() ? "#1a1f28" : "#fdfdfc"; }
-  function makeDarkTex(src) {
-    // Remap paper/ink only; leave photographic color regions alone.
-    var c = document.createElement("canvas");
-    c.width = src.naturalWidth || src.width;
-    c.height = src.naturalHeight || src.height;
-    var g = c.getContext("2d");
-    g.drawImage(src, 0, 0);
-    var img = g.getImageData(0, 0, c.width, c.height), d = img.data;
-    for (var i = 0; i < d.length; i += 4) {
-      var r = d[i], g0 = d[i + 1], b = d[i + 2];
-      var max = r > g0 ? (r > b ? r : b) : (g0 > b ? g0 : b);
-      var min = r < g0 ? (r < b ? r : b) : (g0 < b ? g0 : b);
-      var sat = max === 0 ? 0 : (max - min) / max;
-      var lum = (0.2126 * r + 0.7152 * g0 + 0.0722 * b) / 255;
-      if (sat < 0.22) {
-        var v;
-        if (lum < 0.5) {
-          // Ink → bright for contrast on dark paper
-          v = Math.round(200 + (0.5 - lum) / 0.5 * 55);
-        } else if (lum > 0.78) {
-          // Paper → deep slate
-          v = Math.round(18 + (1 - lum) / 0.22 * 16);
-        } else {
-          v = Math.round(26 + (1 - lum) * 200);
-        }
-        d[i] = d[i + 1] = d[i + 2] = v;
-      } else if (lum > 0.88 && sat < 0.35) {
-        d[i] = 22; d[i + 1] = 26; d[i + 2] = 34;
-      }
-    }
-    g.putImageData(img, 0, 0);
-    return c;
-  }
+  function deskColor() { return isDarkTheme() ? "#7A808A" : "#1a2230"; }
+  function pageBackColor() { return isDarkTheme() ? "#1A1F28" : "#F7F8FA"; }
   function bustDrawCaches() {
     if (typeof caches === "undefined" || !caches) return;
     for (var i = 0; i < caches.length; i++) {
@@ -128,42 +97,104 @@
     caches = [];
     cMo = null;
   }
+  function makeThemeTex(src) {
+    var c = document.createElement("canvas");
+    c.width = src.naturalWidth || src.width;
+    c.height = src.naturalHeight || src.height;
+    var g = c.getContext("2d");
+    g.drawImage(src, 0, 0);
+    var img = g.getImageData(0, 0, c.width, c.height), d = img.data;
+    var w = c.width, h = c.height, bs = 24;
+    var gw = Math.ceil(w / bs), gh = Math.ceil(h / bs);
+    var hot = new Float32Array(gw * gh), mid = new Float32Array(gw * gh);
+    var by, bx, y, x, y0, x0, y1, x1, n, satN, midN, i, r, gv, b, mx, mn, sat, lum;
+    for (by = 0; by < gh; by++) {
+      for (bx = 0; bx < gw; bx++) {
+        x0 = bx * bs; y0 = by * bs; x1 = Math.min(w, x0 + bs); y1 = Math.min(h, y0 + bs);
+        n = 0; satN = 0; midN = 0;
+        for (y = y0; y < y1; y += 2) {
+          for (x = x0; x < x1; x += 2) {
+            i = (y * w + x) * 4;
+            r = d[i]; gv = d[i + 1]; b = d[i + 2];
+            mx = r > gv ? (r > b ? r : b) : (gv > b ? gv : b);
+            mn = r < gv ? (r < b ? r : b) : (gv < b ? gv : b);
+            sat = mx === 0 ? 0 : (mx - mn) / mx;
+            lum = (0.2126 * r + 0.7152 * gv + 0.0722 * b) / 255;
+            if (sat > 0.25) satN++;
+            if (lum > 0.22 && lum < 0.78) midN++;
+            n++;
+          }
+        }
+        if (n) { hot[by * gw + bx] = satN / n; mid[by * gw + bx] = midN / n; }
+      }
+    }
+    var photo = new Uint8Array(gw * gh), seen = new Uint8Array(gw * gh);
+    for (by = 0; by < gh; by++) for (bx = 0; bx < gw; bx++) {
+      i = by * gw + bx;
+      if (hot[i] > 0.12 && mid[i] > 0.4) photo[i] = 1;
+    }
+    var boxes = [], stack = [], cells, y0b, x0b, y1b, x1b, cy, cx, ny, nx, k;
+    for (by = 0; by < gh; by++) for (bx = 0; bx < gw; bx++) {
+      i = by * gw + bx;
+      if (!photo[i] || seen[i]) continue;
+      stack.length = 0; stack.push(by, bx); seen[i] = 1;
+      cells = 0; y0b = y1b = by; x0b = x1b = bx;
+      while (stack.length) {
+        cx = stack.pop(); cy = stack.pop(); cells++;
+        if (cy < y0b) y0b = cy; if (cy > y1b) y1b = cy;
+        if (cx < x0b) x0b = cx; if (cx > x1b) x1b = cx;
+        var dirs = [1, 0, -1, 0, 0, 1, 0, -1];
+        for (k = 0; k < 8; k += 2) {
+          ny = cy + dirs[k]; nx = cx + dirs[k + 1];
+          if (ny < 0 || ny >= gh || nx < 0 || nx >= gw) continue;
+          var ni = ny * gw + nx;
+          if (photo[ni] && !seen[ni]) { seen[ni] = 1; stack.push(ny, nx); }
+        }
+      }
+      if (cells >= 80) boxes.push([y0b, x0b, y1b, x1b]);
+    }
+    var padx = 28, pady = 2;
+    var mask = new Uint8Array(w * h);
+    boxes.forEach(function (box) {
+      var yy0 = Math.max(0, (box[0] - pady) * bs), xx0 = Math.max(0, (box[1] - padx) * bs);
+      var yy1 = Math.min(h, (box[2] + 1 + pady) * bs), xx1 = Math.min(w, (box[3] + 1 + padx) * bs);
+      for (y = yy0; y < yy1; y++) {
+        var row = y * w;
+        for (x = xx0; x < xx1; x++) mask[row + x] = 1;
+      }
+    });
+    for (y = 0; y < h; y++) {
+      var row = y * w;
+      for (x = 0; x < w; x++) {
+        if (mask[row + x]) continue;
+        i = (row + x) * 4;
+        r = d[i]; gv = d[i + 1]; b = d[i + 2];
+        mx = r > gv ? (r > b ? r : b) : (gv > b ? gv : b);
+        mn = r < gv ? (r < b ? r : b) : (gv < b ? gv : b);
+        sat = mx === 0 ? 0 : (mx - mn) / mx;
+        lum = (0.2126 * r + 0.7152 * gv + 0.0722 * b) / 255;
+        if (sat <= 0.18 && lum >= 0.84) { d[i] = 0x1A; d[i + 1] = 0x1F; d[i + 2] = 0x28; }
+        else if (sat <= 0.22 && lum <= 0.5) { d[i] = 0xF4; d[i + 1] = 0xF7; d[i + 2] = 0xFC; }
+      }
+    }
+    g.putImageData(img, 0, 0);
+    return c;
+  }
   function applyThemeTextures() {
     var dark = isDarkTheme();
-    pages.forEach(function (it, i) {
-      var src = pageImgs[i];
+    pages.forEach(function (it, pi) {
+      var src = pageImgs[pi];
       if (!src || !(src.naturalWidth || src.width)) return;
-      if (!it.texLight) {
+      if (dark) {
+        if (!it.texDark) it.texDark = makeThemeTex(src);
+        it.tex = it.texDark;
+      } else {
         it.texLight = src;
-        it.texDark = makeDarkTex(src);
+        it.tex = src;
       }
-      it.tex = dark ? it.texDark : it.texLight;
       it.back = pageBackColor();
       it.K = (it.tex.width || it.tex.naturalWidth) / it.w;
     });
-    OV.forEach(function (o) {
-      var src = o.imgLight || o.img;
-      if (!src || !(src.naturalWidth || src.width)) return;
-      if (!o.imgLight) {
-        o.imgLight = src;
-        o.imgDark = makeDarkTex(src);
-      }
-      o.img = dark ? o.imgDark : o.imgLight;
-    });
-    if (YG.img && (YG.img.naturalWidth || YG.imgLight)) {
-      if (!YG.imgLight && YG.img.naturalWidth) {
-        YG.imgLight = YG.img;
-        YG.imgDark = makeDarkTex(YG.img);
-      }
-      if (YG.imgLight) YG.img = dark ? YG.imgDark : YG.imgLight;
-    }
-    if (YG.panel && (YG.panel.naturalWidth || YG.panelLight)) {
-      if (!YG.panelLight && YG.panel.naturalWidth) {
-        YG.panelLight = YG.panel;
-        YG.panelDark = makeDarkTex(YG.panel);
-      }
-      if (YG.panelLight) YG.panel = dark ? YG.panelDark : YG.panelLight;
-    }
     bustDrawCaches();
     dirty = true;
     kick();
@@ -369,10 +400,11 @@
   }
 
   function drawScene(g, w, h, s, ox, oy, skip) {
+    var desk = deskColor();
     g.setTransform(1, 0, 0, 1, 0, 0);
-    g.fillStyle = deskColor(); g.fillRect(0, 0, w, h);
+    g.fillStyle = desk; g.fillRect(0, 0, w, h);
     g.setTransform(s, 0, 0, s, ox, oy);
-    g.fillStyle = pattern; g.fillRect(-4000, -2500, 12000, 6500);
+    g.fillStyle = desk; g.fillRect(-4000, -2500, 12000, 6500);
     drawStack(g, skip); drawYogi(g);
   }
 
@@ -460,7 +492,7 @@
   // Research paper transitions: the camera pulls back to show about 75% of the page, the page turns there, then the camera zooms in.
   var PV_H = PGH * 0.75, PV_W = PV_H / RATIO;
   var PAGE_VIEW = { x: PW / 2 - PV_W / 2, y: -20, w: PV_W, h: PV_H };
-  var PAGES_AT = [0, 1, 3, 3, 3, 1, 2, 4, 4, 4, 4];     // pages turned to the left at each slide
+  var PAGES_AT = [0, 1, 3, 3, 3, 1, 2, 4, 5, 5, 5];     // pages turned to the left at each slide
 
   var cam = { cx: 0, cy: 0, s: 1 }, camAnim = null, idx = 0, dirty = true, raf = null;
   function regionCam(r) { return { cx: r.x + r.w / 2, cy: r.y + r.h / 2, s: Math.min(W / r.w, H / r.h) }; }
@@ -502,14 +534,24 @@
       if (prev === 3) { setYogi(0, 1); setYogi(1, 1, { animP: true }); }
       else { setYogi(1, 0); setYogi(1, 1, { animA: true, delay: 3200, durA: 600 }); }
     }
-    else if (!(prev === 4 && idx === 5)) setYogi(YG.p, 0);
+    else setYogi(YG.p, 0);
     history.replaceState(null, "", "#" + (idx + 1));
     var dest = idx, moves = JSON.stringify(SLIDES[prev].region) !== JSON.stringify(SLIDES[dest].region);
     var pg0 = PAGES_AT[prev], pg1 = PAGES_AT[dest], turns = pg0 !== pg1;
+    var slideFwd = dest > prev;
+    var pagesFwd = pg1 > pg0;
     if (turns) {
-      // Turn pages in place while the camera pans — no pull-back zoom out
-      setSet(pages, pg1, { delay: 0, dur: 700, stagger: 70 });
-      if (moves) flyToCam(target(dest), 0, null);
+      // Forward book turn: curl in place. Forward slide / book back (3.2→2.2): pull back, turn, zoom in.
+      if (slideFwd && !pagesFwd) {
+        var pv = regionCam(PAGE_VIEW), turnMs = 700 + (Math.abs(pg1 - pg0) - 1) * 70;
+        setSet(pages, pg1, { delay: camMs(pv, cam) + 80, dur: 700, stagger: 70 });
+        flyToCam(pv, 0, function () {
+          flyToCam(target(dest), 80 + turnMs + 80, null, true);
+        }, true);
+      } else {
+        setSet(pages, pg1, { delay: 0, dur: 700, stagger: 70 });
+        if (moves) flyToCam(target(dest), 0, null);
+      }
     } else {
       if (moves) flyToCam(target(dest), 0, null);
     }
@@ -646,9 +688,12 @@
     "11 · Thank You"
   ];
 
+  var stateSeq = 0;
   function notifyDeckState() {
+    stateSeq++;
     var payload = window.deckGetState ? window.deckGetState() : null;
     if (!payload) return;
+    payload.seq = stateSeq;
     try { parent.postMessage({ source: "deck", type: "state", state: payload }, "*"); } catch (err) {}
     try {
       if (!window.__ledBus) window.__ledBus = new BroadcastChannel("ice-sugar-led");
@@ -666,7 +711,9 @@
   window.deckNav = function (delta) { go(idx + (delta < 0 ? -1 : 1)); };
   window.deckSetDark = function (on) {
     document.documentElement.setAttribute("data-theme", on ? "dark" : "light");
-    try { applyThemeTextures(); } catch (err) {}
+    document.body.style.background = deskColor();
+    try { applyThemeTextures(); } catch (err) { dirty = true; kick(); }
+    try { if (typeof draw === "function") draw(); } catch (err) {}
     notifyDeckState();
     return !!on;
   };
@@ -675,7 +722,7 @@
     return window.deckSetDark(on);
   };
   window.deckIsDark = function () {
-    return document.documentElement.getAttribute("data-theme") !== "light";
+    return document.documentElement.getAttribute("data-theme") === "dark";
   };
   window.deckGoTo = function (i) {
     i = Math.max(0, Math.min(SLIDES.length - 1, i | 0));
@@ -703,14 +750,16 @@
       total: SLIDES.length,
       dark: window.deckIsDark(),
       labels: SLIDE_LABELS.slice(),
-      book: window.__bookImages || []
+      book: window.__bookImages || [],
+      seq: stateSeq
     };
   };
 
   // Publish state once images finish loading (after original start)
   var _start = start;
   start = function () {
-    document.documentElement.setAttribute("data-theme", "dark");
+    document.documentElement.setAttribute("data-theme", "light");
+    document.body.style.background = deskColor();
     _start();
     try { applyThemeTextures(); } catch (err) {}
     notifyDeckState();

@@ -229,7 +229,7 @@
             <div class="toggle-row">
               <div>
                 <span>Dark mode</span>
-                <small>Paper pages + grey desk surround</small>
+                <small>Off is light: white paper, navy desk</small>
               </div>
               <button type="button" class="switch" id="togDark" aria-label="Toggle dark mode"></button>
             </div>
@@ -256,15 +256,6 @@
           </div>
         </section>
 
-        <section class="card" style="margin-top:16px">
-          <h2>Photos · assets/book/</h2>
-          <div class="book-list" id="bookList">
-            <div class="book-slot miss">1 ?</div>
-            <div class="book-slot miss">2 ?</div>
-            <div class="book-slot miss">3 ?</div>
-            <div class="book-slot miss">4 ?</div>
-          </div>
-        </section>
       </div>
     </div>
 
@@ -299,7 +290,7 @@
       var state = {
         slide: 0,
         total: 11,
-        dark: true,
+        dark: false,
         ambient: true,
         blackout: false,
         labels: DEFAULT_LABELS.slice(),
@@ -359,23 +350,31 @@
         var labels = state.labels && state.labels.length
           ? state.labels
           : DEFAULT_LABELS;
+        var current = state.slide | 0;
         list.innerHTML = labels.map(function (label, i) {
-          return '<button type="button" class="slide-btn' + (i === state.slide ? " current" : "") +
-            '" data-i="' + i + '"><span class="idx">' + (i + 1) + "</span><span>" + label + "</span></button>";
+          var name = String(label).replace(/^\d+\s*·\s*/, "");
+          return '<button type="button" class="slide-btn' + (i === current ? " current" : "") +
+            '" data-i="' + i + '"><span class="idx">' + (i + 1) + "</span><span>" + name + "</span></button>";
         }).join("");
-
-        var books = state.book && state.book.length
-          ? state.book
-          : [1, 2, 3, 4].map(function (n) { return { n: n, loaded: false }; });
-        document.getElementById("bookList").innerHTML = books.map(function (b) {
-          return '<div class="book-slot ' + (b.loaded ? "ok" : "miss") + '">' +
-            b.n + (b.loaded ? " ✓" : " missing") + "</div>";
-        }).join("");
+        var curBtn = list.querySelector(".slide-btn.current");
+        if (curBtn && curBtn.scrollIntoView) curBtn.scrollIntoView({ block: "nearest" });
       }
 
+      var lastSeq = -1;
       function applyState(next) {
         if (!next) return;
+        // Ignore a leftover 9-slide stage still connected to the relay.
+        var reported = next.total || (next.labels && next.labels.length) || 0;
+        if (reported && reported < DEFAULT_LABELS.length) return;
+        // Drop out-of-order echoes so Next doesn't highlight an older slide.
+        if (typeof next.seq === "number" && next.seq < lastSeq) return;
+        if (typeof next.seq === "number") lastSeq = next.seq;
         state = Object.assign({}, state, next, { linked: true });
+        state.slide = state.slide | 0;
+        if (!state.labels || state.labels.length < DEFAULT_LABELS.length) {
+          state.labels = DEFAULT_LABELS.slice();
+        }
+        if (!state.total || state.total < DEFAULT_LABELS.length) state.total = DEFAULT_LABELS.length;
         render();
       }
 
@@ -426,14 +425,25 @@
           .catch(function () { /* GitHub Pages / static — use BroadcastChannel */ });
       }
 
-      document.getElementById("btnPrev").onclick = function () { send("prev"); };
-      document.getElementById("btnNext").onclick = function () { send("next"); };
-      document.getElementById("btnFirst").onclick = function () { send("goto", 0); };
-      document.getElementById("btnLast").onclick = function () { send("goto", Math.max(0, (state.total || 1) - 1)); };
+      function showSlide(i) {
+        var max = Math.max(0, (state.total || DEFAULT_LABELS.length) - 1);
+        state.slide = Math.max(0, Math.min(max, i | 0));
+        render();
+      }
+      document.getElementById("btnPrev").onclick = function () { showSlide(state.slide - 1); send("prev"); };
+      document.getElementById("btnNext").onclick = function () { showSlide(state.slide + 1); send("next"); };
+      document.getElementById("btnFirst").onclick = function () { showSlide(0); send("goto", 0); };
+      document.getElementById("btnLast").onclick = function () {
+        var last = Math.max(0, (state.total || 1) - 1);
+        showSlide(last);
+        send("goto", last);
+      };
       document.getElementById("slideList").onclick = function (e) {
         var btn = e.target.closest("[data-i]");
         if (!btn) return;
-        send("goto", parseInt(btn.getAttribute("data-i"), 10));
+        var i = parseInt(btn.getAttribute("data-i"), 10);
+        showSlide(i);
+        send("goto", i);
       };
 
       document.getElementById("togDark").onclick = function () {
@@ -467,9 +477,9 @@
       window.addEventListener("keydown", function (e) {
         if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
         if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
-          e.preventDefault(); send("next");
+          e.preventDefault(); showSlide(state.slide + 1); send("next");
         } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-          e.preventDefault(); send("prev");
+          e.preventDefault(); showSlide(state.slide - 1); send("prev");
         } else if (e.key === "d" || e.key === "D") {
           send(state.dark ? "light" : "dark");
         } else if (e.key === "b" || e.key === "B") {

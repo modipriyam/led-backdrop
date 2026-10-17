@@ -17,12 +17,30 @@ const page = await browser.newPage({
   deviceScaleFactor: 1,
 });
 
-await page.goto(`${BASE}/index.html`, { waitUntil: "networkidle", timeout: 60000 });
-await page.waitForTimeout(1800); // fonts + open animations
+await page.goto(`${BASE}/index.html`, { waitUntil: "domcontentloaded", timeout: 60000 });
+await page.waitForFunction(() => {
+  const frame = document.getElementById("deck");
+  const win = frame?.contentWindow;
+  const loading = win?.document?.getElementById("loading");
+  const state = win?.deckGetState?.();
+  return state?.total === 11 && loading && loading.style.display === "none";
+}, { timeout: 120000 });
+
+// Freeze the wall so every slide shares the same backdrop color.
+await page.evaluate(() => {
+  const plane = document.getElementById("led-plane");
+  if (!plane) return;
+  plane.style.animation = "none";
+  plane.style.opacity = "1";
+  plane.classList.add("ambient-off");
+  plane.querySelectorAll("*").forEach((el) => {
+    el.style.animation = "none";
+  });
+});
 
 const count = await page.evaluate(() => {
   const frame = document.getElementById("deck");
-  return frame?.contentWindow?.deckSlideCount?.() ?? 7;
+  return frame?.contentWindow?.deckSlideCount?.() ?? 11;
 });
 
 console.log(`Capturing ${count} slides at ${W}×${H}…`);
@@ -34,8 +52,7 @@ for (let i = 0; i < count; i++) {
     if (win?.deckGoTo) win.deckGoTo(slide);
   }, i);
 
-  // Let highlight / chart / book settle; freeze ambient-looking frame
-  await page.waitForTimeout(i === 0 ? 1600 : 700);
+  await page.waitForTimeout(500);
 
   const name = `slide-${String(i + 1).padStart(2, "0")}-${W}x${H}.png`;
   const file = path.join(OUT, name);

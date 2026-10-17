@@ -344,13 +344,13 @@
     height: 100%;
     overflow: hidden;
     border-radius: 0.25%;
-    background: #121820;
+    background: #1a2230; /* light-mode desk — matches prior --desk light */
     box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.45);
     transition: background-color 0.35s ease;
   }
 
   #stage.is-dark {
-    background: #7A808A;
+    background: #7A808A; /* dark-mode desk — matches prior --desk dark */
   }
 
   /* Admin: mute wall motion */
@@ -553,6 +553,20 @@
   #on-air:hover {
     filter: brightness(1.08);
   }
+  /* Light mode: mute the chip so the toggle state is obvious */
+  #on-air:not(.is-dark) {
+    background: linear-gradient(180deg, #6a7380 0%, #3a4250 100%);
+    border-color: #c5ccd6;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.55),
+      0 0 14px rgba(120, 140, 160, 0.35);
+  }
+  #on-air:not(.is-dark) i {
+    background: #c5ccd6;
+    box-shadow: none;
+    animation: none;
+    opacity: 0.7;
+  }
 
   #on-air i {
     width: 0.7em;
@@ -675,7 +689,7 @@
       <div id="screen">
         <div id="stage">
           <div id="boot-scan" aria-hidden="true"></div>
-          <iframe id="deck" src="deck.html?v=paper11h" title="Paper deck" allowfullscreen></iframe>
+          <iframe id="deck" src="deck.html?v=paper13" title="Paper deck" allowfullscreen></iframe>
           <div id="glass" aria-hidden="true"></div>
         </div>
       </div>
@@ -706,7 +720,7 @@
       var bus = null;
       try { bus = new BroadcastChannel("ice-sugar-led"); } catch (err) { bus = null; }
       var useRelay = false;
-      syncOnAir(true); // dark mode is the default before the iframe reports in
+      syncOnAir(false); // light mode is the default before the iframe reports in
 
       function enableRelay() {
         if (useRelay || !window.LedBus) return;
@@ -758,7 +772,7 @@
       }
 
       function publishState() {
-        var base = deckState() || { slide: 0, total: 11, dark: true, labels: [], book: [] };
+        var base = deckState() || { slide: 0, total: 11, dark: false, labels: [], book: [] };
         var state = Object.assign({}, base, {
           ambient: stageFlags.ambient,
           blackout: stageFlags.blackout
@@ -866,10 +880,12 @@
           e.stopPropagation();
           try {
             var win = deckWin();
-            if (win && typeof win.deckToggleDark === "function") {
-              syncOnAir(win.deckToggleDark());
-              publishState();
-            }
+            if (!win || typeof win.deckToggleDark !== "function") return;
+            var nextDark = win.deckToggleDark();
+            syncOnAir(nextDark);
+            // Re-read after toggle in case the deck reports a different effective theme
+            if (typeof win.deckIsDark === "function") syncOnAir(win.deckIsDark());
+            publishState();
           } catch (err) { /* ignore */ }
         });
       }
