@@ -648,7 +648,9 @@
   .viz-teams { max-width: 100%; }
   .viz-gossip { max-width: 15em; }
 
-  @media (max-width: 640px) {
+  /* Stage iframe is often <640px wide even on desktop LED — do not stack by width.
+     Only stack in true portrait viewports (rare for this 16:9 stage). */
+  @media (max-aspect-ratio: 3/4) {
     .trevor { padding: 3% 3.2% 2.4%; gap: 2%; overflow: auto; }
     .trevor-row {
       grid-template-columns: 1fr;
