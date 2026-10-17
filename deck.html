@@ -153,11 +153,33 @@
       }
       if (cells >= 80) boxes.push([y0b, x0b, y1b, x1b]);
     }
-    var padx = 28, pady = 2;
+    function isPaper(p) {
+      var pr = d[p], pg = d[p + 1], pb = d[p + 2];
+      var hi = pr > pg ? (pr > pb ? pr : pb) : (pg > pb ? pg : pb);
+      var lo = pr < pg ? (pr < pb ? pr : pb) : (pg < pb ? pg : pb);
+      return hi - lo < 12 && (0.2126 * pr + 0.7152 * pg + 0.0722 * pb) > 242;
+    }
+    function inkFrac(ax, ay, len, horiz) {
+      var hit = 0;
+      for (var s = 0; s < len; s++) {
+        var p = horiz ? ((ay * w + ax + s) * 4) : (((ay + s) * w + ax) * 4);
+        if (!isPaper(p)) hit++;
+      }
+      return len ? hit / len : 0;
+    }
     var mask = new Uint8Array(w * h);
     boxes.forEach(function (box) {
-      var yy0 = Math.max(0, (box[0] - pady) * bs), xx0 = Math.max(0, (box[1] - padx) * bs);
-      var yy1 = Math.min(h, (box[2] + 1 + pady) * bs), xx1 = Math.min(w, (box[3] + 1 + padx) * bs);
+      // Grow from the photo core until each edge hits clean paper, so the frame is exact.
+      var yy0 = box[0] * bs, xx0 = box[1] * bs;
+      var yy1 = Math.min(h, (box[2] + 1) * bs), xx1 = Math.min(w, (box[3] + 1) * bs);
+      var grew = true, th = 0.01;
+      while (grew) {
+        grew = false;
+        if (yy0 > 0 && inkFrac(xx0, yy0 - 1, xx1 - xx0, true) > th) { yy0--; grew = true; }
+        if (yy1 < h && inkFrac(xx0, yy1, xx1 - xx0, true) > th) { yy1++; grew = true; }
+        if (xx0 > 0 && inkFrac(xx0 - 1, yy0, yy1 - yy0, false) > th) { xx0--; grew = true; }
+        if (xx1 < w && inkFrac(xx1, yy0, yy1 - yy0, false) > th) { xx1++; grew = true; }
+      }
       for (y = yy0; y < yy1; y++) {
         var row = y * w;
         for (x = xx0; x < xx1; x++) mask[row + x] = 1;
@@ -171,10 +193,27 @@
         r = d[i]; gv = d[i + 1]; b = d[i + 2];
         mx = r > gv ? (r > b ? r : b) : (gv > b ? gv : b);
         mn = r < gv ? (r < b ? r : b) : (gv < b ? gv : b);
-        sat = mx === 0 ? 0 : (mx - mn) / mx;
+        // Navy ink has high hue saturation but low chroma; key on chroma so letters remap whole.
+        if (mx - mn > 51) {
+          // Dark burgundy headers and numbers disappear on the dark page. Render them as light grey.
+          if (r > gv + 8 && r > b + 8 && r < 235) {
+            var srcLum = 0.2126 * r + 0.7152 * gv + 0.0722 * b;
+            var grey = 255 - (255 - srcLum) * 0.22;
+            if (grey < 176) grey = 176;
+            if (grey > 232) grey = 232;
+            d[i] = grey;
+            d[i + 1] = grey;
+            d[i + 2] = grey;
+          }
+          continue;
+        }
         lum = (0.2126 * r + 0.7152 * gv + 0.0722 * b) / 255;
-        if (sat <= 0.18 && lum >= 0.84) { d[i] = 0x1A; d[i + 1] = 0x1F; d[i + 2] = 0x28; }
-        else if (sat <= 0.22 && lum <= 0.5) { d[i] = 0xF4; d[i + 1] = 0xF7; d[i + 2] = 0xFC; }
+        var tp = (lum - 0.30) / 0.60;
+        tp = tp < 0 ? 0 : (tp > 1 ? 1 : tp);
+        tp = Math.pow(tp, 1.8);
+        d[i] = 0xF4 + (0x1A - 0xF4) * tp;
+        d[i + 1] = 0xF7 + (0x1F - 0xF7) * tp;
+        d[i + 2] = 0xFC + (0x28 - 0xFC) * tp;
       }
     }
     g.putImageData(img, 0, 0);
