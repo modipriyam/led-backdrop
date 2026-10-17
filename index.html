@@ -813,7 +813,7 @@
       }
 
       function publishState() {
-        var base = deckState() || { slide: 0, total: 7, dark: false, labels: [], book: [] };
+        var base = deckState() || { slide: 0, total: 7, dark: true, labels: [], book: [] };
         var state = Object.assign({}, base, {
           ambient: stageFlags.ambient,
           blackout: stageFlags.blackout
