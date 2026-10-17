@@ -247,7 +247,7 @@
   #screen-rig {
     position: absolute;
     left: 50%;
-    top: 55%;
+    top: 48%;
     width: 42.5%;
     aspect-ratio: 16 / 9;
     transform: translate(-50%, -50%) scale(0.94);
@@ -516,100 +516,6 @@
     z-index: 1;
   }
 
-  /* Title on the LED wall — kept above the screen bezel */
-  #show-title {
-    position: absolute;
-    left: 50%;
-    top: 2.4%;
-    transform: translateX(-50%);
-    z-index: 5;
-    margin: 0;
-    padding: 0;
-    width: min(68%, 880px);
-    text-align: center;
-    pointer-events: none;
-    color: #f2f7ff;
-  }
-
-  #show-title .name,
-  #show-title .rule,
-  #show-title .sub {
-    opacity: 0;
-    transform: translateY(18%);
-    animation: title-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-
-  #show-title .name { animation-delay: 0.55s; }
-  #show-title .rule { animation-delay: 0.75s; }
-  #show-title .sub { animation-delay: 0.9s; }
-
-  @keyframes title-up {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  #show-title .name {
-    margin: 0;
-    font-family: "Cormorant Garamond", "Didot", "Bodoni MT", Georgia, serif;
-    font-weight: 600;
-    font-size: clamp(2.8rem, 6.4vw, 6.2rem);
-    letter-spacing: 0.12em;
-    line-height: 0.92;
-    text-shadow:
-      0 0 28px rgba(120, 180, 255, 0.5),
-      0 3px 18px rgba(0, 0, 0, 0.6);
-  }
-
-  #show-title .name em {
-    font-style: italic;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: var(--gold);
-    text-shadow:
-      0 0 22px rgba(240, 201, 122, 0.4),
-      0 3px 14px rgba(0, 0, 0, 0.55);
-  }
-
-  #show-title .rule {
-    display: block;
-    width: 0;
-    height: 2px;
-    margin: 0.28em auto 0.22em;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(240, 201, 122, 0.2),
-      rgba(240, 201, 122, 0.95),
-      rgba(160, 210, 255, 0.75),
-      rgba(240, 201, 122, 0.95),
-      rgba(240, 201, 122, 0.2),
-      transparent
-    );
-    box-shadow: 0 0 12px rgba(140, 190, 255, 0.4);
-    animation:
-      title-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.75s forwards,
-      rule-draw 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.85s forwards;
-  }
-
-  @keyframes rule-draw {
-    from { width: 0; }
-    to { width: min(70%, 420px); }
-  }
-
-  #show-title .sub {
-    margin: 0;
-    font-family: Manrope, "Avenir Next", "Segoe UI", sans-serif;
-    font-weight: 400;
-    font-size: clamp(1rem, 1.85vw, 1.75rem);
-    letter-spacing: 0.62em;
-    text-indent: 0.62em;
-    text-transform: uppercase;
-    color: rgba(210, 228, 255, 0.9);
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
-  }
-
   /* Live ON-AIR chip — dark-mode toggle */
   #on-air {
     position: absolute;
@@ -648,20 +554,6 @@
     filter: brightness(1.08);
   }
 
-  #on-air.is-dark {
-    background: linear-gradient(180deg, #3a4558 0%, #1a2230 100%);
-    border-color: #8eb4ff;
-    box-shadow:
-      0 0 0 2px rgba(0, 0, 0, 0.55),
-      0 0 28px rgba(100, 160, 255, 0.55),
-      0 0 56px rgba(80, 140, 255, 0.3);
-  }
-
-  #on-air.is-dark i {
-    background: #8eb4ff;
-    box-shadow: 0 0 10px #8eb4ff, 0 0 18px rgba(140, 180, 255, 0.7);
-  }
-
   #on-air i {
     width: 0.7em;
     height: 0.7em;
@@ -683,9 +575,6 @@
   @media (prefers-reduced-motion: reduce) {
     #led-plane,
     #screen-rig,
-    #show-title .name,
-    #show-title .rule,
-    #show-title .sub,
     #on-air,
     #light-sweep::before,
     #light-sweep::after,
@@ -703,9 +592,6 @@
     #screen-rig {
       transform: translate(-50%, -50%);
     }
-    #show-title .rule {
-      width: min(70%, 420px);
-    }
     #boot-scan {
       display: none;
     }
@@ -721,17 +607,12 @@
     <div id="horizon" aria-hidden="true"></div>
     <div id="floor-spill" aria-hidden="true"></div>
     <button type="button" id="on-air" title="Toggle paper dark mode"><i></i> ON AIR</button>
-    <header id="show-title">
-      <p class="name">Ice <em>&amp;</em> Sugar</p>
-      <span class="rule" aria-hidden="true"></span>
-      <p class="sub">Research</p>
-    </header>
     <div id="screen-rig">
       <div id="screen-glow" aria-hidden="true"></div>
       <div id="screen">
         <div id="stage">
           <div id="boot-scan" aria-hidden="true"></div>
-          <iframe id="deck" src="deck.html?v=bumpers3" title="Paper deck" allowfullscreen></iframe>
+          <iframe id="deck" src="deck.html?v=bumpers4" title="Paper deck" allowfullscreen></iframe>
           <div id="glass" aria-hidden="true"></div>
         </div>
       </div>
