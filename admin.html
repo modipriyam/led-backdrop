@@ -257,7 +257,7 @@
         </section>
 
         <section class="card" style="margin-top:16px">
-          <h2>Book photos · assets/book/</h2>
+          <h2>Photos · assets/book/</h2>
           <div class="book-list" id="bookList">
             <div class="book-slot miss">1 ?</div>
             <div class="book-slot miss">2 ?</div>
@@ -283,13 +283,24 @@
       try { bus = new BroadcastChannel(CHANNEL); } catch (err) { bus = null; }
       var useRelay = false;
 
+      var DEFAULT_LABELS = [
+        "1 · Opening",
+        "2 · Trevor research",
+        "3 · Image 1",
+        "4 · Image 2",
+        "5 · MetLife figures",
+        "6 · Microsoft backdrop",
+        "7 · Image 3",
+        "8 · Image 4",
+        "9 · Closing"
+      ];
       var state = {
         slide: 0,
         total: 9,
         dark: true,
         ambient: true,
         blackout: false,
-        labels: [],
+        labels: DEFAULT_LABELS.slice(),
         book: [],
         linked: false,
         relay: false
@@ -298,10 +309,11 @@
       var link = document.getElementById("linkStatus");
 
       function send(action, value) {
-        var msg = { type: "cmd", action: action, value: value, from: "admin", t: Date.now() };
-        // Exactly one transport — multi-casting caused next/prev to skip slides.
-        if (useRelay) {
-          window.LedBus.sendCmd(action, value).then(function (res) {
+        // Same timestamp on every transport so the stage can dedupe relay + BC + postMessage.
+        var t = Date.now();
+        var msg = { type: "cmd", action: action, value: value, from: "admin", t: t };
+        if (useRelay && window.LedBus) {
+          window.LedBus.sendCmd(action, value, t).then(function (res) {
             if (res && res.ok && res.clients > 0) {
               state.relay = true;
               if (!state.linked) {
@@ -310,11 +322,9 @@
               }
             }
           });
-          return;
         }
         if (bus) {
           try { bus.postMessage(msg); } catch (err) { /* ignore */ }
-          return;
         }
         try {
           if (stageWin && !stageWin.closed) stageWin.postMessage(msg, "*");
@@ -346,7 +356,7 @@
         var list = document.getElementById("slideList");
         var labels = state.labels && state.labels.length
           ? state.labels
-          : Array.from({ length: state.total || 7 }, function (_, i) { return "Slide " + (i + 1); });
+          : DEFAULT_LABELS;
         list.innerHTML = labels.map(function (label, i) {
           return '<button type="button" class="slide-btn' + (i === state.slide ? " current" : "") +
             '" data-i="' + i + '"><span class="idx">' + (i + 1) + "</span><span>" + label + "</span></button>";

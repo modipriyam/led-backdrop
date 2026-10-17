@@ -61,7 +61,20 @@
   #world { position: absolute; left: 0; top: 0; width: 900px; height: 1px; transform-origin: 0 0; }
 
     /* ---------- Flip book on the table (album look) ---------- */
-  #book { position: absolute; left: 0; top: 0; width: 0; height: 0; filter: drop-shadow(0 18px 28px rgba(0,0,0,.55)); }
+  #book { display: none !important; } /* Flip book removed — photos are full-stage plates */
+  .slide-plate.plate-photo {
+    background: #0a0e14;
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+  .slide-plate.plate-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    display: block;
+  }
   .bk-base {
     position: absolute; left: 0; top: -8px; width: 572px; height: 366px;
     border-radius: 4px 6px 6px 4px;
@@ -169,20 +182,22 @@
     text-shadow: 0 2px 16px rgba(80, 140, 220, 0.35);
   }
   .bk-frame {
-    position: absolute; left: 18px; top: 18px; right: 18px; bottom: 18px;
-    background:
-      linear-gradient(180deg, #f4f5f7 0%, #e6e8ed 100%);
-    padding: 10px;
+    position: absolute; left: 10px; top: 10px; right: 10px; bottom: 10px;
+    background: #0c1018;
+    padding: 0;
     border-radius: 2px;
+    overflow: hidden;
     box-shadow:
       0 1px 2px rgba(0,0,0,.12),
       0 8px 18px rgba(0,0,0,.18),
-      inset 0 0 0 1px rgba(255,255,255,.7),
-      inset 0 0 0 7px rgba(40, 50, 70, 0.06);
+      inset 0 0 0 1px rgba(255,255,255,.12);
   }
   .bk-frame img, .bk-ph {
-    display: block; width: 100%; height: 100%; object-fit: cover;
-    border-radius: 1px;
+    display: block; width: 100%; height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    border-radius: 0;
+    background: #0c1018;
   }
   .bk-ph {
     position: relative; display: flex; align-items: center; justify-content: center;
@@ -376,7 +391,8 @@
     opacity: 0;
     pointer-events: none;
     visibility: hidden;
-    transition: opacity 0.45s ease, visibility 0.45s ease, background 0.35s ease, color 0.35s ease;
+    /* Instant cut — fades between bumpers/plates caused paper flashes */
+    transition: background 0.35s ease, color 0.35s ease;
     background:
       radial-gradient(ellipse 70% 55% at 50% 42%, rgba(40, 70, 110, 0.45), transparent 70%),
       linear-gradient(165deg, #121820 0%, #0a0e14 55%, #070a10 100%);
@@ -388,6 +404,19 @@
   }
   :root[data-theme="light"] .bumper .eyebrow { color: rgba(40, 50, 65, 0.65); }
   :root[data-theme="light"] .bumper .mark { color: #152033; text-shadow: none; }
+  :root[data-theme="light"] .bumper .mark em { color: #9a6a12; }
+  :root[data-theme="light"] .bumper .rule {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(154, 106, 18, 0.2),
+      rgba(154, 106, 18, 0.95),
+      rgba(40, 80, 140, 0.55),
+      rgba(154, 106, 18, 0.95),
+      rgba(154, 106, 18, 0.2),
+      transparent
+    );
+  }
   :root[data-theme="light"] .bumper .tagline { color: rgba(30, 40, 55, 0.78); }
   :root[data-theme="light"] .bumper .authors { color: #1a2433; text-shadow: none; }
   .bumper.is-on {
@@ -515,7 +544,7 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.35s ease, visibility 0.35s ease, background 0.35s ease, color 0.35s ease;
+    transition: background 0.35s ease, color 0.35s ease;
     overflow: hidden;
     font-family: Manrope, "Avenir Next", "Segoe UI", sans-serif;
   }
@@ -681,6 +710,290 @@
     max-height: min(100%, 9.5em);
     display: block;
   }
+
+  /* Microsoft: failure → success plate */
+  .slide-plate.plate-ms {
+    --ms-bg: #ffffff;
+    --ms-ink: #1a1a1a;
+    --ms-muted: #5a5a5a;
+    --ms-blue: #0078d4;
+    --ms-title: #0b1f3a;
+    --ms-card: #ffffff;
+    --ms-card-border: #e6e6e6;
+    --ms-card-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    --ms-arrow: #b0b0b0;
+    --ms-pill-2016-bg: #f8d4e0;
+    --ms-pill-2016-fg: #9b2d4a;
+    --ms-pill-n-bg: #d6e8f8;
+    --ms-pill-n-fg: #1a5f9e;
+    --ms-pill-o-bg: #d8f0d8;
+    --ms-pill-o-fg: #2d6b2d;
+    --ms-tweet-meta: #6b7280;
+    --ms-email-bg: #fafafa;
+    --ms-quote-bg: #e8f3fc;
+    background: var(--ms-bg);
+    font-family: "Segoe UI", Manrope, "Avenir Next", sans-serif;
+  }
+  :root[data-theme="dark"] .slide-plate.plate-ms {
+    --ms-bg: #121820;
+    --ms-ink: #e8eef8;
+    --ms-muted: #9aa6b8;
+    --ms-blue: #4da3ff;
+    --ms-title: #e8eef8;
+    --ms-card: #1c2433;
+    --ms-card-border: #2e3a4e;
+    --ms-card-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    --ms-arrow: #5a6575;
+    --ms-pill-2016-bg: #4a2434;
+    --ms-pill-2016-fg: #f0a0b8;
+    --ms-pill-n-bg: #1e3a55;
+    --ms-pill-n-fg: #8ec8ff;
+    --ms-pill-o-bg: #1e3a28;
+    --ms-pill-o-fg: #8fd99a;
+    --ms-tweet-meta: #8b97a8;
+    --ms-email-bg: #161e2a;
+    --ms-quote-bg: #1a3048;
+  }
+  .ms {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: clamp(10px, 2.2%, 22px) clamp(14px, 2.8%, 28px) clamp(10px, 1.8%, 18px);
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: clamp(8px, 1.4%, 14px);
+    position: relative;
+  }
+  .ms * { box-sizing: border-box; }
+  .ms-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1em;
+  }
+  .ms-head .titles { min-width: 0; }
+  .ms-accent {
+    display: block;
+    width: 2.4em;
+    height: 3px;
+    margin-bottom: 0.45em;
+    background: var(--ms-blue);
+    border-radius: 2px;
+  }
+  .ms-head h2 {
+    margin: 0;
+    font-size: clamp(1.15rem, 2.8vw, 1.85rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ms-title);
+    letter-spacing: -0.01em;
+  }
+  .ms-head h2 .ms-brand { color: var(--ms-blue); }
+  .ms-logo {
+    flex: 0 0 auto;
+    width: clamp(1.6rem, 3vw, 2.2rem);
+    height: clamp(1.6rem, 3vw, 2.2rem);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.14em;
+    margin-top: 0.15em;
+  }
+  .ms-logo i { display: block; border-radius: 0.08em; }
+  .ms-logo i:nth-child(1) { background: #f25022; }
+  .ms-logo i:nth-child(2) { background: #7fba00; }
+  .ms-logo i:nth-child(3) { background: #00a4ef; }
+  .ms-logo i:nth-child(4) { background: #ffb900; }
+  .ms-row {
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: clamp(4px, 0.9%, 12px);
+    align-items: stretch;
+  }
+  .ms-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--ms-arrow);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    line-height: 1;
+    align-self: center;
+    font-weight: 300;
+  }
+  .ms-col {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+  }
+  .ms-pill {
+    align-self: flex-start;
+    margin: 0;
+    padding: 0.22em 0.7em;
+    border-radius: 999px;
+    font-size: clamp(0.62rem, 1.15vw, 0.82rem);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .ms-pill.y2016 { background: var(--ms-pill-2016-bg); color: var(--ms-pill-2016-fg); }
+  .ms-pill.nadella { background: var(--ms-pill-n-bg); color: var(--ms-pill-n-fg); }
+  .ms-pill.outcome { background: var(--ms-pill-o-bg); color: var(--ms-pill-o-fg); }
+  .ms-col h3 {
+    margin: 0;
+    font-size: clamp(0.95rem, 1.9vw, 1.35rem);
+    font-weight: 700;
+    color: var(--ms-title);
+    line-height: 1.15;
+  }
+  .ms-col .body {
+    margin: 0;
+    font-size: clamp(0.68rem, 1.25vw, 0.92rem);
+    line-height: 1.35;
+    color: var(--ms-muted);
+  }
+  .ms-viz {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+  }
+  .ms-tweet, .ms-email {
+    width: 100%;
+    background: var(--ms-card);
+    border: 1px solid var(--ms-card-border);
+    border-radius: 12px;
+    box-shadow: var(--ms-card-shadow);
+    padding: 0.7em 0.85em 0.65em;
+  }
+  .ms-tweet-hd {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    margin-bottom: 0.55em;
+  }
+  .ms-avatar {
+    width: 2.4em;
+    height: 2.4em;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: #2a1840;
+  }
+  .ms-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .ms-avatar.zo { background: #1a2a38; }
+  .ms-tweet-who { min-width: 0; line-height: 1.2; }
+  .ms-tweet-who strong {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    font-size: clamp(0.72rem, 1.3vw, 0.95rem);
+    color: var(--ms-ink);
+  }
+  .ms-tweet-who strong svg { width: 0.95em; height: 0.95em; }
+  .ms-tweet-who span {
+    display: block;
+    font-size: clamp(0.58rem, 1.05vw, 0.75rem);
+    color: var(--ms-tweet-meta);
+  }
+  .ms-tweet-text {
+    margin: 0 0 0.5em;
+    font-size: clamp(1rem, 2.2vw, 1.55rem);
+    font-weight: 700;
+    color: var(--ms-ink);
+    line-height: 1.2;
+  }
+  .ms-tweet-meta {
+    margin: 0 0 0.45em;
+    font-size: clamp(0.55rem, 1vw, 0.72rem);
+    color: var(--ms-tweet-meta);
+  }
+  .ms-tweet-acts {
+    display: flex;
+    gap: 1.1em;
+    color: var(--ms-tweet-meta);
+  }
+  .ms-tweet-acts svg { width: 1em; height: 1em; display: block; }
+  .ms-email-bar {
+    display: flex;
+    gap: 0.35em;
+    margin-bottom: 0.55em;
+  }
+  .ms-email-bar i {
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+  }
+  .ms-email-bar i:nth-child(1) { background: #ff5f57; }
+  .ms-email-bar i:nth-child(2) { background: #febc2e; }
+  .ms-email-bar i:nth-child(3) { background: #28c840; }
+  .ms-email-fields {
+    margin: 0 0 0.55em;
+    padding: 0.4em 0.5em;
+    border-radius: 6px;
+    background: var(--ms-email-bg);
+    font-size: clamp(0.58rem, 1.05vw, 0.75rem);
+    line-height: 1.45;
+    color: var(--ms-muted);
+  }
+  .ms-email-fields b { color: var(--ms-ink); font-weight: 600; }
+  .ms-quote {
+    margin: 0;
+    padding: 0.55em 0.65em;
+    border-radius: 8px;
+    background: var(--ms-quote-bg);
+    font-size: clamp(0.65rem, 1.2vw, 0.88rem);
+    font-style: italic;
+    line-height: 1.35;
+    color: var(--ms-ink);
+  }
+  .ms-timeline {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.25em;
+  }
+  .ms-tl-item {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+  }
+  .ms-tl-item .face {
+    width: 2.6em;
+    height: 2.6em;
+    margin: 0 auto 0.4em;
+    border-radius: 50%;
+  }
+  .ms-tl-item .face.azure {
+    display: grid;
+    place-items: center;
+    background: linear-gradient(160deg, #3b8bea, #1a5fb4);
+    border-radius: 0.45em;
+  }
+  .ms-tl-item .face.azure svg { width: 65%; height: 65%; }
+  .ms-tl-item .lab {
+    margin: 0;
+    font-size: clamp(0.52rem, 0.95vw, 0.7rem);
+    line-height: 1.25;
+    color: var(--ms-muted);
+  }
+  .ms-tl-item .lab b {
+    display: block;
+    color: var(--ms-ink);
+    font-weight: 700;
+  }
+  .ms-tl-arrow {
+    flex: 0 0 auto;
+    align-self: center;
+    margin-top: -1.2em;
+    color: var(--ms-arrow);
+    font-size: 1.1rem;
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -708,6 +1021,87 @@
     <p class="authors">Dr. Shah &nbsp;·&nbsp; Dr. Mehta</p>
   </div>
 </div>
+<section id="plate-photo" class="slide-plate plate-photo" aria-hidden="true" aria-label="Photo">
+  <img id="plate-photo-img" alt="">
+</section>
+<section id="plate-microsoft" class="slide-plate plate-ms" aria-hidden="true" aria-label="Microsoft: Turning a Public Failure into Long-Term Success">
+  <div class="ms">
+    <header class="ms-head">
+      <div class="titles">
+        <span class="ms-accent" aria-hidden="true"></span>
+        <h2><span class="ms-brand">Microsoft:</span> Turning a Public Failure into Long-Term Success</h2>
+      </div>
+      <div class="ms-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    </header>
+    <div class="ms-row">
+      <article class="ms-col">
+        <p class="ms-pill y2016">2016</p>
+        <h3>Tay Chatbot Launch</h3>
+        <p class="body">Microsoft launched an AI chatbot named Tay on Twitter.</p>
+        <div class="ms-viz">
+          <div class="ms-tweet">
+            <div class="ms-tweet-hd">
+              <div class="ms-avatar" aria-hidden="true"><img src="assets/ms/tay-robot.jpg" alt=""></div>
+              <div class="ms-tweet-who">
+                <strong>Tay <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1d9bf0"/><path d="M10.1 15.9l-3.2-3.2 1.2-1.2 2 2 4.8-4.8 1.2 1.2z" fill="#fff"/></svg></strong>
+                <span>@TayTweets</span>
+              </div>
+            </div>
+            <p class="ms-tweet-text">I hate everyone.</p>
+            <p class="ms-tweet-meta">10:03 PM · Mar 23, 2016</p>
+            <div class="ms-tweet-acts" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.4 8.4 0 01-12 7.6L3 21l1.9-5.4A8.4 8.4 0 1121 11.5z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 11c0 5.6-7 10-7 10z"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12v8h16v-8"/><path d="M12 3v13"/><path d="M7 8l5-5 5 5"/></svg>
+            </div>
+          </div>
+        </div>
+      </article>
+      <div class="ms-arrow" aria-hidden="true">→</div>
+      <article class="ms-col">
+        <p class="ms-pill nadella">Nadella’s Response</p>
+        <p class="body">Instead of blaming the team, Satya Nadella sent a calm, private email.</p>
+        <div class="ms-viz">
+          <div class="ms-email">
+            <div class="ms-email-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="ms-email-fields">
+              <div><b>From:</b> Satya Nadella</div>
+              <div><b>To:</b> Team</div>
+              <div><b>Subject:</b> Keep learning</div>
+            </div>
+            <p class="ms-quote">“Keep pushing, and know that I am with you… The key is to keep learning.”</p>
+          </div>
+        </div>
+      </article>
+      <div class="ms-arrow" aria-hidden="true">→</div>
+      <article class="ms-col">
+        <p class="ms-pill outcome">Outcome</p>
+        <p class="body">The team, supported and encouraged, continued to learn and build.</p>
+        <div class="ms-viz">
+          <div class="ms-timeline">
+            <div class="ms-tl-item">
+              <div class="face ms-avatar" aria-hidden="true"><img src="assets/ms/tay-robot.jpg" alt=""></div>
+              <p class="lab"><b>Tay</b>2016</p>
+            </div>
+            <div class="ms-tl-arrow" aria-hidden="true">→</div>
+            <div class="ms-tl-item">
+              <div class="face ms-avatar zo" aria-hidden="true"><img src="assets/ms/zo-robot.jpg" alt=""></div>
+              <p class="lab"><b>Zo</b>2017</p>
+            </div>
+            <div class="ms-tl-arrow" aria-hidden="true">→</div>
+            <div class="ms-tl-item">
+              <div class="face azure" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M8 34l10-20h12l10 20H8z" fill="#fff" opacity=".95"/><path d="M22 18l-6 12h16l-4-8h-4z" fill="#8ec8ff"/></svg>
+              </div>
+              <p class="lab"><b>Microsoft AI infrastructure</b>Today</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
 <section id="plate-trevor" class="slide-plate" aria-hidden="true" aria-label="Dr. Trevor and Team management research">
   <div class="trevor">
     <header class="trevor-head">
@@ -965,6 +1359,10 @@
   var bumperOpen = document.getElementById("bumper-open");
   var bumperClose = document.getElementById("bumper-close");
   var plateTrevor = document.getElementById("plate-trevor");
+  var plateMicrosoft = document.getElementById("plate-microsoft");
+  var platePhoto = document.getElementById("plate-photo");
+  var platePhotoImg = document.getElementById("plate-photo-img");
+  var PHOTO_SRC = [null, null, null, null];
   function setPlate(el, on) {
     if (!el) return;
     el.classList.toggle("is-on", !!on);
@@ -975,61 +1373,91 @@
     el.classList.toggle("is-on", !!on);
     el.setAttribute("aria-hidden", on ? "false" : "true");
   }
+  function showPhoto(n, on) {
+    if (!on) {
+      setPlate(platePhoto, false);
+      return;
+    }
+    var src = PHOTO_SRC[n - 1];
+    if (platePhotoImg) {
+      if (src) platePhotoImg.src = src;
+      else platePhotoImg.removeAttribute("src");
+      platePhotoImg.alt = src ? ("Photo " + n) : "";
+    }
+    setPlate(platePhoto, true);
+  }
   function titleRegion() {
     return { x: 23.5, y: 6, w: 851, h: 365 };
   }
-  function closingRegion() {
-    var p = document.getElementById("pg3");
-    return { x: 23.5, y: p.offsetTop + 6, w: 851, h: 851 * 1536 / 3584 };
+  function metlifeRegion() {
+    var r = rectOf(fig);
+    return { x: r.x, y: r.y - 4, w: r.w, h: r.w * 1536 / 3584 };
   }
 
+  // Flow (9): Opening → Trevor → Image 1 → Image 2 → MetLife → Microsoft → Image 3 → Image 4 → Closing
+  // Image 2 sits on MetLife framing so Image 2 → MetLife is a cut, not a pan over paper.
   var SLIDE_LABELS = [
     "1 · Opening",
     "2 · Trevor research",
-    "3 · MetLife figures",
-    "4 · Photo book · 1",
-    "5 · Photo book · 2",
-    "6 · Photo book · 3",
-    "7 · Photo book · 4",
-    "8 · Section 3",
+    "3 · Image 1",
+    "4 · Image 2",
+    "5 · MetLife figures",
+    "6 · Microsoft backdrop",
+    "7 · Image 3",
+    "8 · Image 4",
     "9 · Closing"
   ];
   var SLIDES = [
-    // Static open bumper (full-stage card; camera parked on title region underneath)
     {
       region: titleRegion,
       onArrive: function () { setBumper(bumperOpen, true); },
       onLeave: function () { setBumper(bumperOpen, false); }
     },
-    // Full-stage Trevor / management researchers plate (replaces abstract zoom)
     {
       region: titleRegion,
       onArrive: function () { setPlate(plateTrevor, true); },
       onLeave: function () { setPlate(plateTrevor, false); }
     },
     {
-      region: function () { var r = rectOf(fig); return { x: r.x, y: r.y - 4, w: r.w, h: r.w * 1536 / 3584 }; },
+      photo: 1,
+      region: titleRegion,
+      onArrive: function () { showPhoto(1, true); },
+      onLeave: function () { showPhoto(1, false); }
+    },
+    {
+      photo: 2,
+      region: metlifeRegion,
+      onArrive: function () { showPhoto(2, true); },
+      onLeave: function () { showPhoto(2, false); }
+    },
+    {
+      region: metlifeRegion,
       onArrive: function () { fig.classList.add("on"); },
       onLeave: function () { fig.classList.remove("on"); }
     },
-    { book: 1, region: bookRegion },
-    { book: 2, region: bookRegion },
-    { book: 3, region: bookRegion },
-    { book: 4, region: bookRegion },
-    { book: 0, region: closingRegion },
-    // Static close bumper
     {
-      region: closingRegion,
+      region: metlifeRegion,
+      onArrive: function () { setPlate(plateMicrosoft, true); },
+      onLeave: function () { setPlate(plateMicrosoft, false); }
+    },
+    {
+      photo: 3,
+      region: metlifeRegion,
+      onArrive: function () { showPhoto(3, true); },
+      onLeave: function () { showPhoto(3, false); }
+    },
+    {
+      photo: 4,
+      region: metlifeRegion,
+      onArrive: function () { showPhoto(4, true); },
+      onLeave: function () { showPhoto(4, false); }
+    },
+    {
+      region: metlifeRegion,
       onArrive: function () { setBumper(bumperClose, true); },
       onLeave: function () { setBumper(bumperClose, false); }
     }
   ];
-  // Tight crop on the open right-hand photo page so the image reads large on the LED
-  function bookRegion() {
-    var w = 580;
-    var h = w * 1536 / 3584;
-    return { x: BOOK_S + 280 - w / 2, y: bookTop + 175 - h / 2, w: w, h: h };
-  }
 
   // Quiet slate surface (no wood grain) — sits with the blue LED set behind paper/photos
   (function () {
@@ -1051,43 +1479,17 @@
     document.documentElement.style.setProperty("--surface", "url(" + c.toDataURL("image/jpeg", 0.85) + ")");
   })();
 
-  // ---------- Flip book: loads assets/book/1–4.(jpg|jpeg|png|webp) ----------
+  // ---------- Photo assets (full-stage plates; Smrutis flip book removed) ----------
   var BOOK_DIR = "assets/book/";
   var BOOK_EXTS = ["jpg", "jpeg", "png", "webp", "JPG", "JPEG", "PNG", "WEBP"];
-  var BOOK_S = 1660, bookTop = 0;
-  var PH = [["#8fa6c4", "#d6c3a1"], ["#a9b99a", "#e3d8b0"], ["#c49a8f", "#e8d2b8"], ["#9aa3b8", "#cfd6dd"]];
-  var bookEl = document.getElementById("book"), LEAVES = [], bookRaf = null, lblock = null;
-
   function easeIO(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
   function easeFlip(t) { return 1 - Math.pow(1 - t, 2.75); }
-
-  function renderLeaf(L) {
-    var th = Math.PI * L.p, c = Math.cos(th), s = Math.sin(th);
-    if (Math.abs(c) < 0.002) c = 0.002;
-    L.el.style.transform = "scaleX(" + c.toFixed(4) + ") scaleY(" + (1 + 0.07 * s).toFixed(4) + ")";
-    L.front.style.visibility = c > 0 ? "visible" : "hidden";
-    L.back.style.visibility = c > 0 ? "hidden" : "visible";
-    L.shade.style.opacity = (0.48 * s).toFixed(3);
-    L.el.style.zIndex = L.p < 0.5 ? (50 - L.i) : (10 + L.i);
-  }
-
-  function addLeaf(i, frontEl, cover) {
-    var el = document.createElement("div");
-    el.className = "bk-leaf" + (cover ? " bk-cover" : "");
-    el.innerHTML = '<div class="bk-face bk-front"><div class="bk-spine"></div></div>' +
-      '<div class="bk-face bk-back"><div class="bk-spine"></div></div><div class="bk-shade"></div>';
-    el.children[0].insertBefore(frontEl, el.children[0].firstChild);
-    bookEl.appendChild(el);
-    var L = { i: i, el: el, front: el.children[0], back: el.children[1], shade: el.children[2], p: 0, to: 0, anim: null };
-    LEAVES.push(L); renderLeaf(L);
-  }
 
   function resolveBookImage(n) {
     return new Promise(function (resolve) {
       var i = 0;
       (function tryNext() {
         if (i >= BOOK_EXTS.length) { resolve(null); return; }
-        // No query-string cache-bust: breaks file:// opens in Finder/browser
         var url = BOOK_DIR + n + "." + BOOK_EXTS[i++];
         var probe = new Image();
         probe.onload = function () { resolve(url); };
@@ -1097,86 +1499,12 @@
     });
   }
 
-  function makePlaceholder(kk) {
-    var ph = document.createElement("div");
-    ph.className = "bk-ph";
-    ph.style.background =
-      "radial-gradient(ellipse at 70% 25%, rgba(255,255,255,.25), transparent 45%)," +
-      "linear-gradient(145deg," + PH[kk][0] + "," + PH[kk][1] + ")";
-    ph.innerHTML =
-      '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice">' +
-      '<circle cx="72" cy="16" r="8" fill="#fff" opacity=".5"/>' +
-      '<path d="M0 60 L28 26 L50 44 L66 30 L100 60Z" fill="#fff" opacity=".28"/>' +
-      '<path d="M0 60 L40 38 L58 48 L78 34 L100 60Z" fill="#0b1220" opacity=".18"/>' +
-      "</svg><b>PHOTO " + (kk + 1) + "</b>";
-    return ph;
-  }
-
-  function buildBook(imageUrls) {
-    window.__bookImages = imageUrls.map(function (u, i) {
+  var bookReady = Promise.all([1, 2, 3, 4].map(resolveBookImage)).then(function (urls) {
+    PHOTO_SRC = urls.slice();
+    window.__bookImages = urls.map(function (u, i) {
       return { n: i + 1, loaded: !!u, src: u || null };
     });
-    bookEl.innerHTML = '<div class="bk-base"></div><div class="bk-lblock"></div><div class="bk-rblock"></div>';
-    lblock = bookEl.querySelector(".bk-lblock");
-    LEAVES = [];
-
-    var coverEl = document.createElement("div");
-    coverEl.className = "bk-title";
-    coverEl.innerHTML = '<span>Ice <em>&amp;</em> Sugar</span><i></i><p class="bk-sub">Smrutis</p>';
-    addLeaf(0, coverEl, true);
-
-    for (var kk = 0; kk < 4; kk++) {
-      var frame = document.createElement("div");
-      frame.className = "bk-frame";
-      if (imageUrls[kk]) {
-        var im = document.createElement("img");
-        im.src = imageUrls[kk];
-        im.alt = "Photo " + (kk + 1);
-        frame.appendChild(im);
-      } else {
-        frame.appendChild(makePlaceholder(kk));
-      }
-      addLeaf(kk + 1, frame, false);
-    }
-  }
-
-  var bookReady = Promise.all([1, 2, 3, 4].map(resolveBookImage)).then(buildBook);
-
-  // f = number of leaves turned to the left (0 = closed, 1 = cover open and photo 1 showing, ... 4 = photo 4 showing)
-  function setBook(f, o) {
-    o = o || {};
-    var now = performance.now(), changing = [];
-    LEAVES.forEach(function (L, i) {
-      var to = i < f ? 1 : 0;
-      if (L.to === to) return;
-      L.to = to; changing.push(L);
-    });
-    // leaves turning left go in order (cover first); leaves returning go last-in first-out so the cover lands on top
-    changing.sort(function (a, b) { return a.to === 1 ? a.i - b.i : b.i - a.i; });
-    changing.forEach(function (L, n) {
-      if (o.instant) { L.p = L.to; L.anim = null; renderLeaf(L); return; }
-      L.anim = { from: L.p, to: L.to, t0: now + (o.delay || 0) + n * (o.stagger || 0), dur: o.dur || 560 };
-    });
-    var showLeft = f > 0;
-    if (o.instant) lblock.style.opacity = showLeft ? 1 : 0;
-    else setTimeout(function () { lblock.style.opacity = showLeft ? 1 : 0; }, (o.delay || 0) + (showLeft ? 0.28 : 0.7) * (o.dur || 560));
-    if (!bookRaf) bookRaf = requestAnimationFrame(bookStep);
-  }
-
-  function bookStep(now) {
-    var active = false;
-    LEAVES.forEach(function (L) {
-      var a = L.anim;
-      if (!a) return;
-      var t = (now - a.t0) / a.dur;
-      active = true;
-      if (t < 0) return;
-      if (t >= 1) { L.p = a.to; L.anim = null; }
-      else { L.p = a.from + (a.to - a.from) * easeFlip(t); }
-      renderLeaf(L);
-    });
-    bookRaf = active ? requestAnimationFrame(bookStep) : null;
-  }
+  });
 
   // ---------- Paper stack: pages lie in one pile; the top page turns to the left to reveal the next ----------
   var PAGE_EL = ["pg1", "pg2", "pg3"].map(function (id, i) {
@@ -1241,8 +1569,9 @@
     pagesRaf = active ? requestAnimationFrame(pagesStep) : null;
   }
 
-  // Pages turned at each slide (open+title share pg1; figures+book share after turn 1; section3+close share after turn 2)
-  var PAGES_AT = [0, 0, 1, 1, 1, 1, 1, 2, 2];
+  // Page stack under overlays. Image 2+ share MetLife's page so cuts stay clean.
+  // Closing stays on pg2 under the bumper (no return flip).
+  var PAGES_AT = [0, 0, 0, 1, 1, 1, 1, 1, 1];
   function schedulePages(prev, i) {
     var pg = PAGES_AT[prev], g = PAGES_AT[i];
     if (pg === g) return;
@@ -1342,20 +1671,9 @@
     pagesRaf = active ? requestAnimationFrame(pagesStep) : null;
   }
 
-  // One arrow = one clear beat: photo flips are snappy; open/close lands as the camera arrives.
-  function scheduleBook(prev, i) {
-    var pf = SLIDES[prev].book || 0, f = SLIDES[i].book || 0, o;
-    if (pf === f) return;
-    if (pf > 0 && f > 0) o = { delay: 40, dur: 520, stagger: 0 };
-    else if (f > 0) o = (f === 1) ? { delay: 380, dur: 680, stagger: 0 } : { delay: 380, dur: 620, stagger: 90 };
-    else o = { delay: 0, dur: 620, stagger: 60 };
-    setBook(f, o);
-  }
-
-  function layoutBook() {
-    bookTop = Math.round(rectOf(fig).y + 8);
-    bookEl.style.left = BOOK_S + "px";
-    bookEl.style.top = bookTop + "px";
+  function regionKey(i) {
+    var r = SLIDES[i].region();
+    return [r.x, r.y, r.w, r.h].map(function (n) { return Math.round(n); }).join(",");
   }
 
   var STATS = null, RENDERER = "unknown";
@@ -1378,35 +1696,30 @@
   function smoother(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
 
   function flightMs(i) {
+    if (!cam) return 700;
     var to = target(i), dist = Math.hypot(to.cx - cam.cx, to.cy - cam.cy);
-    // Snappier pans: short nudges ~650ms, long trips cap ~1350ms
-    return 650 + Math.min(700, dist * 0.42);
+    return 600 + Math.min(700, dist * 0.3);
   }
-  function flyTo(i, prev, delay) {
+  // Camera pan only. Overlay arrive runs when the pan finishes.
+  function flyTo(i) {
+    if (!cam) { cam = target(i); render(); }
     var from = { cx: cam.cx, cy: cam.cy, s: cam.s }, to = target(i);
-    var dist = Math.hypot(to.cx - from.cx, to.cy - from.cy);
-    var scaleJump = Math.abs(Math.log(to.s / from.s));
-    // Only a light pull-back on long relocates — short moves stay locked on content
-    var dip = dist < 400 && scaleJump < 0.15 ? 0 : Math.max(0.06, Math.min(0.32, dist / 2200));
     var dur = flightMs(i);
-    var t0 = performance.now() + (delay || 0), last = t0, worst = 0, sum = 0, n = 0;
+    var t0 = performance.now(), last = t0, worst = 0, sum = 0, n = 0;
     if (raf) cancelAnimationFrame(raf);
     (function step(now) {
-      if (now < t0) { raf = requestAnimationFrame(step); return; }
       if (now > t0) { var dt = now - last; sum += dt; n++; if (dt > worst) worst = dt; }
       last = now;
       var t = Math.min(1, (now - t0) / dur), e = smoother(t);
       cam.cx = from.cx + (to.cx - from.cx) * e;
       cam.cy = from.cy + (to.cy - from.cy) * e;
-      var logS = Math.log(from.s) + (Math.log(to.s) - Math.log(from.s)) * e;
-      cam.s = Math.exp(logS) / (1 + dip * Math.sin(Math.PI * t));
+      cam.s = Math.exp(Math.log(from.s) + (Math.log(to.s) - Math.log(from.s)) * e);
       render();
       if (t < 1) { raf = requestAnimationFrame(step); }
       else {
         raf = null;
         STATS = { avg: sum / Math.max(1, n), worst: worst, frames: n };
         showDiag();
-        if (prev !== undefined && prev !== i && SLIDES[prev].onLeave) SLIDES[prev].onLeave();
         if (SLIDES[i].onArrive) SLIDES[i].onArrive();
         notifyDeckState();
       }
@@ -1417,36 +1730,46 @@
     i = Math.max(0, Math.min(SLIDES.length - 1, i));
     if (i === idx) return;
     var prev = idx;
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+
     idx = i;
     document.body.dataset.slide = idx;
     history.replaceState(null, "", "#" + (idx + 1));
-    scheduleBook(prev, idx);
-    var moves = JSON.stringify(SLIDES[prev].region()) !== JSON.stringify(SLIDES[idx].region());
-    var turns = PAGES_AT[prev] !== PAGES_AT[idx];
-    var leavingBook = (SLIDES[prev].book || 0) > 0 && !(SLIDES[idx].book > 0);
-    // Title→MetLife (and any first page-turn while relocating): turn BEFORE the camera flies,
-    // otherwise we land on page 2's crop while page 1 is still on top.
-    var firstPageTurn = PAGES_AT[prev] === 0 && PAGES_AT[idx] > 0;
-    var TURN_MS = 760, camDelay = 0, pageDelay = 0;
-    if (turns && moves) {
-      // Also: leaving the photo book — turn to the next paper page BEFORE flying back,
-      // otherwise the camera lands on slide/page 2 and only then reveals section 3.
-      if (firstPageTurn || leavingBook) {
-        camDelay = TURN_MS;
-      } else {
-        pageDelay = flightMs(idx) + 40; // camera first, then turn at the pile
-      }
-    }
-    schedulePages(prev, idx, pageDelay);
-    if (moves) {
-      flyTo(idx, prev, camDelay);
-    } else {
-      // Same camera region (e.g. open bumper → title): still run leave/arrive
-      // so bumpers hide/show. flyTo is what normally calls these.
-      if (SLIDES[prev] && SLIDES[prev].onLeave) SLIDES[prev].onLeave();
-      if (SLIDES[idx] && SLIDES[idx].onArrive) SLIDES[idx].onArrive();
+
+    var prevSlide = SLIDES[prev];
+    var nextSlide = SLIDES[idx];
+    var prevPhoto = prevSlide.photo || 0;
+    var nextPhoto = nextSlide.photo || 0;
+    var moves = regionKey(prev) !== regionKey(idx);
+
+    // Photo → photo on the same framing: swap pixels only (no hide/show flash)
+    if (prevPhoto && nextPhoto && !moves) {
+      showPhoto(nextPhoto, true);
       notifyDeckState();
+      return;
     }
+
+    // Photo → photo across framing (Image 1 → 2): keep the plate up so the
+    // pan happens under it, then swap the image when we land.
+    if (prevPhoto && nextPhoto && moves) {
+      if (PAGES_AT[prev] !== PAGES_AT[idx]) setPages(PAGES_AT[idx], { instant: true });
+      flyTo(idx); // onArrive calls showPhoto(next)
+      return;
+    }
+
+    if (!moves) {
+      // Same framing: next overlay on first, then remove previous (no paper flash)
+      if (PAGES_AT[prev] !== PAGES_AT[idx]) setPages(PAGES_AT[idx], { instant: true });
+      if (nextSlide.onArrive) nextSlide.onArrive();
+      if (prevSlide.onLeave) prevSlide.onLeave();
+      notifyDeckState();
+      return;
+    }
+
+    // Overlay/paper with a real camera move: clear overlay, snap page, pan
+    if (prevSlide.onLeave) prevSlide.onLeave();
+    if (PAGES_AT[prev] !== PAGES_AT[idx]) setPages(PAGES_AT[idx], { instant: true });
+    flyTo(idx);
   }
 
   function notifyDeckState() {
@@ -1464,13 +1787,9 @@
     var n = parseInt(location.hash.slice(1), 10);
     idx = (n >= 1 && n <= SLIDES.length) ? n - 1 : 0;
     document.body.dataset.slide = idx;
-    layoutBook(); setBook(SLIDES[idx].book || 0, { instant: true }); setPages(PAGES_AT[idx], { instant: true });
+    setPages(PAGES_AT[idx], { instant: true });
     cam = target(idx); render();
-    if (SLIDES[idx].onArrive) {
-      // Bumpers should appear immediately; paper effects can wait a beat
-      if (idx === 0 || idx === SLIDES.length - 1) SLIDES[idx].onArrive();
-      else setTimeout(SLIDES[idx].onArrive, 300);
-    }
+    if (SLIDES[idx].onArrive) SLIDES[idx].onArrive();
     notifyDeckState();
   }
 
@@ -1491,13 +1810,13 @@
   // Jump to a slide instantly (for exports / deep links)
   window.deckGoTo = function (i) {
     i = Math.max(0, Math.min(SLIDES.length - 1, i | 0));
+    if (i === idx && !raf) return;
     if (raf) { cancelAnimationFrame(raf); raf = null; }
     var prev = idx;
     if (SLIDES[prev] && SLIDES[prev].onLeave && prev !== i) SLIDES[prev].onLeave();
     idx = i;
     document.body.dataset.slide = idx;
     history.replaceState(null, "", "#" + (idx + 1));
-    setBook(SLIDES[idx].book || 0, { instant: true });
     setPages(PAGES_AT[idx], { instant: true });
     cam = target(idx); render();
     if (SLIDES[idx].onArrive) SLIDES[idx].onArrive();

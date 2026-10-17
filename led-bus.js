@@ -60,13 +60,13 @@
       .catch(function (err) { return { ok: false, error: String(err) }; });
   }
 
-  function sendCmd(action, value) {
+  function sendCmd(action, value, t) {
     return post("/cmd", {
       type: "cmd",
       action: action,
       value: value,
       from: "admin",
-      t: Date.now()
+      t: t != null ? t : Date.now()
     });
   }
 
