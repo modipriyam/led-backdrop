@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ice &amp; Sugar — Stage Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0f14;
+    --panel: #151a22;
+    --panel-2: #1b2230;
+    --line: rgba(180, 200, 230, 0.14);
+    --text: #e8eef8;
+    --muted: #8b97a8;
+    --accent: #7eb6ff;
+    --gold: #f0c97a;
+    --danger: #ff5c5c;
+    --ok: #3dd68c;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; min-height: 100%;
+    background:
+      radial-gradient(ellipse 80% 50% at 10% -10%, rgba(80, 140, 220, 0.18), transparent 55%),
+      var(--bg);
+    color: var(--text);
+    font-family: Manrope, "Avenir Next", sans-serif;
+  }
+  body { padding: 28px 24px 48px; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  header {
+    display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+    gap: 16px; margin-bottom: 28px;
+  }
+  .brand h1 {
+    margin: 0;
+    font-size: 1.55rem; font-weight: 700; letter-spacing: 0.04em;
+  }
+  .brand h1 span { color: var(--gold); font-style: italic; font-weight: 500; }
+  .brand p { margin: 6px 0 0; color: var(--muted); font-size: 0.92rem; }
+  .status {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 999px;
+    background: var(--panel); border: 1px solid var(--line);
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.78rem; letter-spacing: 0.04em;
+  }
+  .status i {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--danger);
+    box-shadow: 0 0 10px var(--danger);
+  }
+  .status.live i { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+  .grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 16px;
+  }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 18px;
+  }
+  .card h2 {
+    margin: 0 0 14px;
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+  }
+  .now {
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(126, 182, 255, 0.08);
+    border: 1px solid rgba(126, 182, 255, 0.2);
+  }
+  .now .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.8rem; color: var(--accent); letter-spacing: 0.08em;
+  }
+  .now .label { margin-top: 4px; font-size: 1.2rem; font-weight: 600; }
+  .nav-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  button, .btn {
+    appearance: none; border: 0; cursor: pointer;
+    font: inherit; color: var(--text);
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #243041;
+    border: 1px solid var(--line);
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  }
+  button:hover, .btn:hover { background: #2c3a4f; border-color: rgba(126,182,255,.35); }
+  button:active { transform: translateY(1px); }
+  button.primary {
+    background: linear-gradient(180deg, #4f8fef, #2f6fd6);
+    border-color: transparent;
+    font-weight: 700;
+  }
+  button.primary:hover { filter: brightness(1.06); }
+  button.gold {
+    background: linear-gradient(180deg, #e2b86a, #c9963f);
+    color: #1a1408; border-color: transparent; font-weight: 700;
+  }
+  button.danger {
+    background: linear-gradient(180deg, #ff6b6b, #d44545);
+    border-color: transparent; font-weight: 700;
+  }
+  button.active {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .slides {
+    display: flex; flex-direction: column; gap: 8px;
+    max-height: 360px; overflow: auto;
+  }
+  .slide-btn {
+    display: flex; align-items: center; gap: 12px;
+    text-align: left; width: 100%;
+    padding: 12px 14px;
+  }
+  .slide-btn .idx {
+    flex: 0 0 auto;
+    width: 28px; height: 28px; border-radius: 8px;
+    display: grid; place-items: center;
+    background: rgba(255,255,255,.06);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem; color: var(--muted);
+  }
+  .slide-btn.current {
+    background: rgba(126, 182, 255, 0.14);
+    border-color: rgba(126, 182, 255, 0.45);
+  }
+  .slide-btn.current .idx {
+    background: var(--accent); color: #0b1220; font-weight: 700;
+  }
+  .toggles {
+    display: grid; gap: 10px;
+  }
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 14px; border-radius: 12px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--line);
+  }
+  .toggle-row span { font-size: 0.95rem; font-weight: 500; }
+  .toggle-row small { display: block; color: var(--muted); font-size: 0.75rem; margin-top: 2px; font-weight: 400; }
+  .switch {
+    position: relative; width: 48px; height: 28px; flex: 0 0 auto;
+    border-radius: 999px; background: #2a3344; border: 1px solid var(--line);
+    cursor: pointer; padding: 0;
+  }
+  .switch::after {
+    content: "";
+    position: absolute; top: 3px; left: 3px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: #d7e0ef;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .switch.on { background: #2f6fd6; border-color: transparent; }
+  .switch.on::after { transform: translateX(20px); background: #fff; }
+  .actions { display: grid; gap: 10px; margin-top: 14px; }
+  .book-list {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  }
+  .book-slot {
+    padding: 12px 8px; text-align: center; border-radius: 10px;
+    background: rgba(255,255,255,.03); border: 1px solid var(--line);
+    font-family: "IBM Plex Mono", monospace; font-size: 0.72rem;
+  }
+  .book-slot.ok { border-color: rgba(61, 214, 140, 0.45); color: var(--ok); }
+  .book-slot.miss { border-color: rgba(255, 92, 92, 0.35); color: var(--danger); }
+  .hint {
+    margin-top: 18px; color: var(--muted); font-size: 0.82rem; line-height: 1.5;
+  }
+  .hint code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.78rem;
+    color: var(--accent);
+  }
+  .quick {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;
+  }
+</style>
+<script src="led-bus.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>Ice <span>&amp;</span> Sugar · Admin</h1>
+        <p>Backstage controls for the LED stage. Keep this on a laptop; open the stage on the wall.</p>
+      </div>
+      <div class="status" id="linkStatus"><i></i> <span>Waiting for stage…</span></div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Slides</h2>
+        <div class="now">
+          <div class="num" id="nowNum">— / —</div>
+          <div class="label" id="nowLabel">Connect the stage to begin</div>
+        </div>
+        <div class="nav-row">
+          <button type="button" id="btnPrev">← Previous</button>
+          <button type="button" class="primary" id="btnNext">Next →</button>
+        </div>
+        <div class="quick">
+          <button type="button" id="btnFirst">First slide</button>
+          <button type="button" id="btnLast">Last slide</button>
+        </div>
+        <div style="height:14px"></div>
+        <h2>Jump to</h2>
+        <div class="slides" id="slideList"></div>
+      </section>
+
+      <div>
+        <section class="card">
+          <h2>Look &amp; stage</h2>
+          <div class="toggles">
+            <div class="toggle-row">
+              <div>
+                <span>Dark mode</span>
+                <small>Paper pages + grey desk surround</small>
+              </div>
+              <button type="button" class="switch" id="togDark" aria-label="Toggle dark mode"></button>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <span>Ambient motion</span>
+                <small>Particles, sweeps, horizon glow</small>
+              </div>
+              <button type="button" class="switch on" id="togAmbient" aria-label="Toggle ambient"></button>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <span>Blackout</span>
+                <small>Hide stage content instantly</small>
+              </div>
+              <button type="button" class="switch" id="togBlackout" aria-label="Toggle blackout"></button>
+            </div>
+          </div>
+          <div class="actions">
+            <button type="button" class="gold" id="btnOpen">Open stage window</button>
+            <button type="button" class="primary" id="btnFs">Fullscreen on stage…</button>
+            <button type="button" id="btnReplayTitle">Replay title highlight</button>
+            <button type="button" class="danger" id="btnPing">Ping / refresh link</button>
+          </div>
+        </section>
+
+        <section class="card" style="margin-top:16px">
+          <h2>Book photos · assets/book/</h2>
+          <div class="book-list" id="bookList">
+            <div class="book-slot miss">1 ?</div>
+            <div class="book-slot miss">2 ?</div>
+            <div class="book-slot miss">3 ?</div>
+            <div class="book-slot miss">4 ?</div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <p class="hint">
+      Run <code>node server.mjs</code> in this folder, then use
+      <code>http://localhost:8765/admin.html</code> and
+      <code>http://localhost:8765/index.html</code> (not file://).
+      Click <strong>Open stage window</strong>, or open the stage in another tab — controls relay through the server.
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      var CHANNEL = "ice-sugar-led";
+      var bus = null;
+      try { bus = new BroadcastChannel(CHANNEL); } catch (err) { bus = null; }
+      var useRelay = false;
+
+      var state = {
+        slide: 0,
+        total: 7,
+        dark: false,
+        ambient: true,
+        blackout: false,
+        labels: [],
+        book: [],
+        linked: false,
+        relay: false
+      };
+      var stageWin = null;
+      var link = document.getElementById("linkStatus");
+
+      function send(action, value) {
+        var msg = { type: "cmd", action: action, value: value, from: "admin", t: Date.now() };
+        // Exactly one transport — multi-casting caused next/prev to skip slides.
+        if (useRelay) {
+          window.LedBus.sendCmd(action, value).then(function (res) {
+            if (res && res.ok && res.clients > 0) {
+              state.relay = true;
+              if (!state.linked) {
+                state.linked = true;
+                render();
+              }
+            }
+          });
+          return;
+        }
+        if (bus) {
+          try { bus.postMessage(msg); } catch (err) { /* ignore */ }
+          return;
+        }
+        try {
+          if (stageWin && !stageWin.closed) stageWin.postMessage(msg, "*");
+        } catch (err) { /* ignore */ }
+        try {
+          localStorage.setItem("ice-sugar-led-cmd", JSON.stringify(msg));
+        } catch (err) { /* ignore */ }
+      }
+
+      function render() {
+        link.classList.toggle("live", state.linked);
+        if (!useRelay && location.protocol === "file:") {
+          link.querySelector("span").textContent = "Open via http://localhost:8765 (file:// cannot control stage)";
+        } else {
+          link.querySelector("span").textContent = state.linked
+            ? ("Stage linked · slide " + (state.slide + 1) + "/" + state.total)
+            : "Waiting for stage… open index.html on this server";
+        }
+
+        document.getElementById("nowNum").textContent =
+          state.total ? ((state.slide + 1) + " / " + state.total) : "— / —";
+        document.getElementById("nowLabel").textContent =
+          (state.labels && state.labels[state.slide]) || "—";
+
+        document.getElementById("togDark").classList.toggle("on", !!state.dark);
+        document.getElementById("togAmbient").classList.toggle("on", state.ambient !== false);
+        document.getElementById("togBlackout").classList.toggle("on", !!state.blackout);
+
+        var list = document.getElementById("slideList");
+        var labels = state.labels && state.labels.length
+          ? state.labels
+          : Array.from({ length: state.total || 7 }, function (_, i) { return "Slide " + (i + 1); });
+        list.innerHTML = labels.map(function (label, i) {
+          return '<button type="button" class="slide-btn' + (i === state.slide ? " current" : "") +
+            '" data-i="' + i + '"><span class="idx">' + (i + 1) + "</span><span>" + label + "</span></button>";
+        }).join("");
+
+        var books = state.book && state.book.length
+          ? state.book
+          : [1, 2, 3, 4].map(function (n) { return { n: n, loaded: false }; });
+        document.getElementById("bookList").innerHTML = books.map(function (b) {
+          return '<div class="book-slot ' + (b.loaded ? "ok" : "miss") + '">' +
+            b.n + (b.loaded ? " ✓" : " missing") + "</div>";
+        }).join("");
+      }
+
+      function applyState(next) {
+        if (!next) return;
+        state = Object.assign({}, state, next, { linked: true });
+        render();
+      }
+
+      function onMessage(msg) {
+        if (!msg) return;
+        if (msg.type === "state" && msg.state) applyState(msg.state);
+        else if (msg.state && (msg.type === "state" || msg.from === "stage")) applyState(msg.state);
+        if (msg.type === "pong") {
+          state.linked = true;
+          if (msg.state) applyState(msg.state);
+          else render();
+        }
+      }
+
+      if (bus) {
+        bus.onmessage = function (e) { onMessage(e.data); };
+      }
+      window.addEventListener("storage", function (e) {
+        if (e.key !== "ice-sugar-led-state" || !e.newValue) return;
+        try { onMessage(JSON.parse(e.newValue)); } catch (err) { /* ignore */ }
+      });
+      window.addEventListener("message", function (e) {
+        if (!e.data || e.data.from === "admin") return;
+        onMessage(e.data);
+      });
+
+      function enableRelay() {
+        if (useRelay || !window.LedBus) return;
+        useRelay = true;
+        window.LedBus.on("state", function (msg) {
+          if (msg && msg.state) applyState(msg.state);
+          else if (msg && msg.slide !== undefined) applyState(msg);
+        });
+        window.LedBus.on("status", function (s) {
+          if (s && s.linked) {
+            state.relay = true;
+            render();
+          }
+        });
+        window.LedBus.connect("admin");
+        send("ping");
+      }
+
+      if (window.LedBus && /^https?:$/i.test(location.protocol)) {
+        fetch("/health", { cache: "no-store" })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (j) { if (j && j.ok) enableRelay(); })
+          .catch(function () { /* GitHub Pages / static — use BroadcastChannel */ });
+      }
+
+      document.getElementById("btnPrev").onclick = function () { send("prev"); };
+      document.getElementById("btnNext").onclick = function () { send("next"); };
+      document.getElementById("btnFirst").onclick = function () { send("goto", 0); };
+      document.getElementById("btnLast").onclick = function () { send("goto", Math.max(0, (state.total || 1) - 1)); };
+      document.getElementById("slideList").onclick = function (e) {
+        var btn = e.target.closest("[data-i]");
+        if (!btn) return;
+        send("goto", parseInt(btn.getAttribute("data-i"), 10));
+      };
+
+      document.getElementById("togDark").onclick = function () {
+        send(state.dark ? "light" : "dark");
+      };
+      document.getElementById("togAmbient").onclick = function () {
+        send("ambient", !(state.ambient !== false));
+      };
+      document.getElementById("togBlackout").onclick = function () {
+        send("blackout", !state.blackout);
+      };
+      document.getElementById("btnFs").onclick = function () {
+        send("fullscreen");
+        // Glance at the stage — browsers require a click there to enter fullscreen.
+        try { if (stageWin && !stageWin.closed) stageWin.focus(); } catch (err) { /* ignore */ }
+      };
+      document.getElementById("btnReplayTitle").onclick = function () { send("replayTitle"); };
+      document.getElementById("btnPing").onclick = function () { send("ping"); };
+
+      document.getElementById("btnOpen").onclick = function () {
+        stageWin = window.open("index.html", "ice-sugar-stage");
+        if (!stageWin) {
+          link.classList.remove("live");
+          link.querySelector("span").textContent = "Popup blocked — allow popups, then try again";
+          return;
+        }
+        setTimeout(function () { send("ping"); }, 600);
+        setTimeout(function () { send("ping"); }, 1500);
+      };
+
+      window.addEventListener("keydown", function (e) {
+        if (e.target && /input|textarea|select/i.test(e.target.tagName)) return;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " ") {
+          e.preventDefault(); send("next");
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          e.preventDefault(); send("prev");
+        } else if (e.key === "d" || e.key === "D") {
+          send(state.dark ? "light" : "dark");
+        } else if (e.key === "b" || e.key === "B") {
+          send("blackout", !state.blackout);
+        }
+      });
+
+      render();
+      setTimeout(function () { send("ping"); }, 400);
+      setInterval(function () { send("ping"); }, 5000);
+    })();
+  </script>
+</body>
+</html>

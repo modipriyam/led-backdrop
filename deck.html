@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Factors Affecting Success Beyond Talent and Opportunity</title>
+<style>
+  :root {
+    --desk: #1a2230;
+    --paper: #D5D8DE;
+    --ink: #0E1116;
+    --navy: #152033;
+    --crimson: #7A1524;
+    --slate: #2F3A4A;
+    --mist: #5A6575;
+    --card: #C2C6CE;
+    --rule: #9AA1AB;
+    --muted: #3A4250;
+    --muted-2: #2F3744;
+    --chart-navy: #2B3A55;
+    --chart-crimson: #8C1D2F;
+    --chart-mist: #A9B4C8;
+    --serif: Cambria, "Noto Serif", Georgia, "Times New Roman", serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* ON AIR click → dark paper + greyish desk/surround above & around the page */
+  :root[data-theme="dark"] {
+    --desk: #7A808A;
+    --paper: #1A1F28;
+    --ink: #F4F7FC;
+    --navy: #D6E2F5;
+    --crimson: #FF9AA6;
+    --slate: #D2DBE8;
+    --mist: #8B97A8;
+    --card: #2C3545;
+    --rule: #6A788A;
+    --muted: #D0D8E6;
+    --muted-2: #E0E6F0;
+    --chart-navy: #8BBBFF;
+    --chart-crimson: #FF9AA6;
+    --chart-mist: #B8C6DA;
+  }
+
+  html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; height: 100%; overflow: hidden;
+    background: #121820;
+    font-family: var(--serif); color: var(--ink);
+    -webkit-user-select: none; user-select: none;
+    transition: color 0.35s ease, background-color 0.35s ease;
+  }
+  :root[data-theme="dark"] body {
+    background: var(--desk);
+  }
+  .pg, .pg-back, .pg-proxy, #fade {
+    transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+  }
+  body.idle { cursor: none; }
+
+  /* The camera looks at this world. Units are "paper pixels". */
+  #world { position: absolute; left: 0; top: 0; width: 900px; height: 1px; transform-origin: 0 0; }
+
+    /* ---------- Flip book on the table (album look) ---------- */
+  #book { position: absolute; left: 0; top: 0; width: 0; height: 0; filter: drop-shadow(0 18px 28px rgba(0,0,0,.55)); }
+  .bk-base {
+    position: absolute; left: 0; top: -8px; width: 572px; height: 366px;
+    border-radius: 4px 6px 6px 4px;
+    background:
+      linear-gradient(145deg, #3a4558 0%, #1c2433 42%, #121820 100%);
+    box-shadow:
+      0 0 0 1px rgba(240, 201, 122, 0.22),
+      0 14px 28px rgba(0,0,0,.5),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  .bk-lblock, .bk-rblock {
+    position: absolute; top: 0; width: 560px; height: 350px;
+    background: linear-gradient(105deg, #d2d6de 0%, #e8eaef 18%, #eceef2 82%, #d0d4dc 100%);
+  }
+  .bk-lblock {
+    left: -560px; opacity: 0;
+    box-shadow:
+      -1px 1px 0 #c8ccd4, -2px 2px 0 #b4b9c2, -3px 3px 0 #c8ccd4,
+      -4px 4px 0 #b4b9c2, -5px 5px 0 #c8ccd4, -8px 12px 22px rgba(0,0,0,.4);
+    transition: opacity .3s ease;
+  }
+  .bk-lblock::after {
+    content: "";
+    position: absolute; inset: 28px 36px 28px 52px;
+    border: 1px solid rgba(90, 100, 120, 0.18);
+    border-radius: 2px;
+    background:
+      radial-gradient(ellipse at 30% 40%, rgba(120,160,210,.08), transparent 55%),
+      linear-gradient(135deg, rgba(255,255,255,.35), transparent 40%);
+    pointer-events: none;
+  }
+  .bk-rblock {
+    left: 0;
+    box-shadow:
+      1px 1px 0 #c8ccd4, 2px 2px 0 #b4b9c2, 3px 3px 0 #c8ccd4,
+      4px 4px 0 #b4b9c2, 5px 5px 0 #c8ccd4;
+  }
+  .bk-leaf { position: absolute; left: 0; top: 0; width: 560px; height: 350px; transform-origin: 0 50%; }
+  .bk-cover { top: -8px; width: 572px; height: 366px; }
+  .bk-face {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden;
+    background: linear-gradient(105deg, #d8dce4 0%, #e9ebf0 45%, #e2e5eb 100%);
+  }
+  .bk-cover .bk-front {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 35%, rgba(90,140,200,.2), transparent 60%),
+      linear-gradient(160deg, #2a3448 0%, #151c28 48%, #0d121a 100%);
+  }
+  .bk-cover .bk-front::before {
+    content: '';
+    position: absolute; left: 22px; top: 22px; right: 22px; bottom: 22px;
+    border: 1.5px solid rgba(240, 201, 122, 0.55);
+    box-shadow: inset 0 0 0 8px rgba(20, 28, 40, 0.35);
+  }
+  .bk-cover .bk-front::after {
+    content: '';
+    position: absolute; left: 34px; top: 34px; right: 34px; bottom: 34px;
+    border: 1px solid rgba(180, 210, 255, 0.18);
+  }
+  .bk-back { transform: scaleX(-1); visibility: hidden; background: #dde1e8; }
+  .bk-cover .bk-back {
+    background: linear-gradient(160deg, #243044 0%, #121820 100%);
+  }
+  .bk-spine {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 48px;
+    background: linear-gradient(90deg, rgba(10,14,22,.45), rgba(10,14,22,.12) 55%, transparent);
+  }
+  .bk-back .bk-spine {
+    left: auto; right: 0;
+    background: linear-gradient(270deg, rgba(10,14,22,.45), rgba(10,14,22,.12) 55%, transparent);
+  }
+  .bk-shade {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: 0; pointer-events: none;
+    background: linear-gradient(90deg, rgba(8,12,20,.62), rgba(8,12,20,0) 72%);
+  }
+  .bk-title {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 1; text-align: center; padding: 40px;
+  }
+  .bk-title .bk-eyebrow {
+    margin: 0 0 18px;
+    font-family: Manrope, "Avenir Next", sans-serif;
+    font-size: 15px; font-weight: 500; letter-spacing: 0.42em; text-indent: 0.42em;
+    text-transform: uppercase; color: rgba(200, 220, 255, 0.72);
+  }
+  .bk-title span {
+    font-family: "Cormorant Garamond", Cambria, Georgia, serif;
+    font-size: 38px; font-weight: 600; letter-spacing: 0.1em;
+    color: #f2f6ff;
+    text-shadow: 0 2px 18px rgba(80, 140, 220, 0.35);
+  }
+  .bk-title span em {
+    font-style: italic; font-weight: 500; color: #f0c97a;
+  }
+  .bk-title i {
+    display: block; width: 120px; height: 1.5px; margin-top: 18px;
+    background: linear-gradient(90deg, transparent, #f0c97a, rgba(160,210,255,.8), #f0c97a, transparent);
+  }
+  .bk-title .bk-sub {
+    margin: 18px 0 0;
+    font-family: "Cormorant Garamond", Cambria, Georgia, serif;
+    font-size: 56px; font-weight: 600; letter-spacing: 0.22em; text-indent: 0.22em;
+    text-transform: uppercase; color: rgba(240, 245, 255, 0.96);
+    text-shadow: 0 2px 16px rgba(80, 140, 220, 0.35);
+  }
+  .bk-frame {
+    position: absolute; left: 18px; top: 18px; right: 18px; bottom: 18px;
+    background:
+      linear-gradient(180deg, #f4f5f7 0%, #e6e8ed 100%);
+    padding: 10px;
+    border-radius: 2px;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,.12),
+      0 8px 18px rgba(0,0,0,.18),
+      inset 0 0 0 1px rgba(255,255,255,.7),
+      inset 0 0 0 7px rgba(40, 50, 70, 0.06);
+  }
+  .bk-frame img, .bk-ph {
+    display: block; width: 100%; height: 100%; object-fit: cover;
+    border-radius: 1px;
+  }
+  .bk-ph {
+    position: relative; display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .bk-ph svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .bk-ph b {
+    position: relative;
+    font-family: Manrope, "Avenir Next", sans-serif;
+    font-size: 22px; font-weight: 600; letter-spacing: 0.28em; text-indent: 0.28em;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0,0,0,.55), 0 0 1px rgba(0,0,0,.8);
+    padding: 10px 18px;
+    border: 1px solid rgba(255,255,255,.35);
+    background: rgba(12, 18, 28, 0.28);
+    backdrop-filter: blur(2px);
+  }
+
+  /* Tabletop: lives inside the world so it moves and zooms with the paper. Built from cheap gradients only. */
+  #desk {
+    position: absolute; left: -4000px; top: -2200px; width: 8900px; height: 9400px;
+    background-color: var(--desk);
+    background-image: var(--surface, none);
+    background-size: 1024px 1024px;
+    transition: background-color 0.35s ease;
+  }
+  :root[data-theme="dark"] #desk {
+    background-image: none; /* flat grey surround — reads as the area above/around the page */
+  }
+
+  /* ---------- Sheets of paper (A4 ratio) on the desk ---------- */
+  .pg {
+    position: absolute; left: 0; width: 900px; height: 1273px;
+    background: var(--paper);
+    box-shadow: 0 6px 16px rgba(0,0,0,.4), 0 0 0 1px rgba(0,0,0,.12);
+  }
+  /* The pages are one pile, page 1 on top. Next turns the top page to the left, revealing the one beneath. */
+  #pg1, #pg2, #pg3 { top: 0; transform-origin: 0 0; }
+  #pg3 { box-shadow: 1px 1px 0 #c4c8d0, 2px 2px 0 #aeb3bc, 3px 3px 0 #c4c8d0, 4px 4px 0 #aeb3bc, 0 6px 16px rgba(0,0,0,.4); }
+  :root[data-theme="dark"] #pg3 {
+    box-shadow: 1px 1px 0 #2a3340, 2px 2px 0 #1a222c, 3px 3px 0 #2a3340, 4px 4px 0 #1a222c, 0 6px 16px rgba(0,0,0,.55);
+  }
+  .pg-back { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: var(--paper); opacity: 0; z-index: 30; }
+  .pg-proxy { position: absolute; left: 0; top: 0; width: 900px; height: 1273px; background: var(--paper); transform-origin: 0 0; box-shadow: 0 0 0 1px rgba(0,0,0,.14); visibility: hidden; }
+  .pg-pshade { position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: 0; pointer-events: none; background: linear-gradient(90deg, rgba(40,30,15,.45), rgba(40,30,15,0) 75%); }
+  .pg-shade { position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: 0; pointer-events: none; z-index: 31; background: linear-gradient(90deg, rgba(40,30,15,.45), rgba(40,30,15,0) 75%); }
+  /* paper grain removed: it was too expensive to redraw while the camera zooms */
+
+  /* ---------- Page 1 top third: header, title, authors, abstract ---------- */
+  .abs { position: absolute; left: 66px; width: 766px; margin: 0; }
+  #journal  { top: 24px;  font-size: 17px; font-weight: 700; letter-spacing: 1.6px; color: var(--crimson); }
+  #hdrrule  { top: 52px;  height: 0; border-top: 1px solid var(--rule); }
+  #head { position: absolute; left: 66px; top: 66px; width: 766px; }
+  #title { margin: 0 0 24px; font-size: 42px; line-height: 1.18; font-weight: 700; text-wrap: balance; color: var(--ink); }
+  /* Yellow marker highlight — sweeps across the paper title on slide 1 */
+  #title .hl {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    color: inherit;
+    background-image: linear-gradient(
+      180deg,
+      transparent 8%,
+      rgba(255, 224, 50, 0.72) 8%,
+      rgba(255, 214, 0, 0.78) 92%,
+      transparent 92%
+    );
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    background-position: left center;
+    padding: 0 0.06em;
+  }
+  #title .hl.is-on {
+    animation: title-hl 1.35s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+  }
+  /* Dark mode: keep ink dark on the yellow marker so the title stays readable */
+  :root[data-theme="dark"] #title .hl {
+    color: #10141c;
+    background-image: linear-gradient(
+      180deg,
+      transparent 8%,
+      rgba(255, 230, 80, 0.92) 8%,
+      rgba(255, 220, 40, 0.95) 92%,
+      transparent 92%
+    );
+  }
+  @keyframes title-hl {
+    from { background-size: 0% 100%; }
+    to { background-size: 100% 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #title .hl.is-on {
+      animation: none;
+      background-size: 100% 100%;
+    }
+  }
+  #authors { margin: 0; font-size: 25px; font-weight: 700; color: var(--navy); }
+  #authors sup, #affil sup { font-size: 15px; font-weight: 400; vertical-align: top; position: relative; top: -2px; margin-left: 1px; }
+  #affil { margin: 6px 0 0; font-size: 15px; font-style: italic; color: var(--muted); }
+  #abslabel { margin: 30px 0 8px; font-size: 15px; font-weight: 700; letter-spacing: 3px; color: var(--crimson); }
+  #absbox { position: relative; }
+  #abstract { margin: 0; font-size: 22px; line-height: 30px; color: var(--ink); font-weight: 500; }
+  #keywords { margin: 22px 0 0; font-size: 15px; color: var(--muted-2); }
+  #keywords b { color: var(--ink); }
+
+  /* Soft bottom mask only — kept below the abstract so it no longer covers readable text */
+  #fade {
+    position: absolute; left: -66px; top: auto; bottom: -8px; width: 900px; height: 48px;
+    background: linear-gradient(to bottom, transparent, var(--paper) 70%);
+    opacity: 0; transition: opacity .9s ease; pointer-events: none; z-index: 2;
+  }
+  body[data-slide="0"] #fade { opacity: 0.55; }
+
+  /* ---------- Running heads, footers, footnotes ---------- */
+  .runhead {
+    position: absolute; left: 66px; width: 766px; top: 42px; padding-bottom: 9px;
+    border-bottom: 1px solid var(--rule);
+    display: flex; justify-content: space-between;
+    font-size: 15px; color: var(--muted); letter-spacing: .3px;
+  }
+  .runhead i { color: var(--muted-2); }
+  .pgfoot {
+    position: absolute; left: 66px; width: 766px; bottom: 34px; padding-top: 9px;
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between;
+    font-size: 14px; color: var(--muted);
+  }
+  .fnote {
+    position: absolute; left: 66px; width: 766px; bottom: 82px;
+    font-size: 14.5px; line-height: 21px; color: var(--slate);
+  }
+  .fnote::before { content: ""; display: block; width: 120px; border-top: 1px solid var(--rule); margin-bottom: 9px; }
+  .fnote sup { font-size: 10px; }
+
+  /* ---------- Body text ---------- */
+  .pbody { position: absolute; left: 66px; width: 766px; font-size: 19px; line-height: 27.5px; color: var(--ink); }
+  #pb1 { top: 545px; }
+  #pb2, #pb3 { top: 108px; }
+  .pbody h2 { font-size: 24px; margin: 46px 0 13px; line-height: 1.2; color: var(--ink); }
+  .pbody h2:first-child { margin-top: 0; }
+  .pbody p { margin: 0; text-align: justify; hyphens: auto; color: var(--ink); }
+  .pbody p + p { text-indent: 1.4em; }
+  .pbody sup { font-size: 12px; line-height: 0; color: var(--crimson); font-weight: 700; margin-left: 1px; }
+  .cols { column-count: 2; column-gap: 34px; }
+  .figcap { font-size: 16.5px; line-height: 23px; color: var(--slate); margin-top: 16px !important; text-align: left !important; }
+  .figcap b { color: var(--ink); }
+
+  .refs { font-size: 15px; line-height: 21px; column-count: 2; column-gap: 34px; color: var(--ink); }
+  .refs p { padding-left: 1.6em; text-indent: -1.6em !important; margin-bottom: 6px !important; text-align: left !important; hyphens: none !important; color: var(--ink); }
+
+  /* ---------- Figure 1: the framed region for slide 2 ---------- */
+  #fig { position: relative; width: 851px; height: 228px; margin: 30px 0 0 -42.5px; }
+  #figtag {
+    position: absolute; left: 42.5px; top: 6px;
+    font-size: 14px; font-weight: 700; letter-spacing: 2.4px; color: var(--crimson);
+  }
+  .card {
+    position: absolute; top: 30px; width: 238px; height: 192px;
+    background: var(--card); border-radius: 10px;
+    box-shadow: inset 0 0 0 1px var(--rule);
+  }
+  :root[data-theme="dark"] .card {
+    box-shadow: inset 0 0 0 1px rgba(180, 200, 230, 0.22);
+  }
+  .big {
+    position: absolute; left: 0; top: 4px; width: 100%; height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; font-weight: 700; color: var(--crimson);
+  }
+  .cap {
+    position: absolute; left: 0; top: 55px; width: 100%; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; color: var(--navy);
+  }
+  .chart { position: absolute; left: 8.5px; top: 78px; width: 221px; }
+  .plot { display: flex; align-items: flex-end; height: 84px; }
+  .col  { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+  .val  { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 4px; white-space: nowrap; }
+  .bar  { width: 62%; height: var(--h); }
+  .cats { display: flex; border-top: 1px solid var(--mist); padding-top: 6px; }
+  .cats div { flex: 1; text-align: center; font-size: 14px; color: var(--slate); }
+  #diag { position: fixed; left: 12px; top: 12px; z-index: 99; padding: 8px 12px; background: rgba(0,0,0,.8); color: #fff; font: 14px/1.5 monospace; border-radius: 6px; display: none; white-space: pre; }
+  body.diag #diag { display: block; }
+  /* Stage-safe guide (press G): the bottom third of the screen is covered by actors and props. Keep key content above the line. */
+  #guide { position: fixed; left: 0; right: 0; top: 66.667%; bottom: 0; z-index: 98; pointer-events: none; display: none; background: rgba(220,0,0,.14); border-top: 3px dashed rgba(220,0,0,.85); }
+  body.guide #guide { display: block; }
+</style>
+</head>
+<body data-slide="0">
+
+<div id="diag"></div>
+<div id="guide"></div>
+<div id="world">
+  <div id="desk"></div>
+  <div id="book"></div>
+
+  <!-- ===================== PAGE 1 ===================== -->
+  <div class="pg" id="pg1">
+    <p class="abs" id="journal">JOURNAL OF BEHAVIORAL LEADERSHIP &amp; COMMUNICATION &nbsp;|&nbsp; 2026</p>
+    <div class="abs" id="hdrrule"></div>
+    <div id="head">
+    <h1 id="title"><span class="hl">Factors Affecting Success Beyond Talent and Opportunity</span></h1>
+    <p id="authors">Dr. Shah<sup>1</sup>, &nbsp;Dr. Mehta<sup>1,*</sup></p>
+    <p id="affil"><sup style="font-style:normal">1</sup>Institute for Behavioral &amp; Organizational Research</p>
+    <p id="abslabel">ABSTRACT</p>
+    <div id="absbox"><p id="abstract">Talent and opportunity are widely seen as the drivers of success. Yet equally capable people routinely end up with very different outcomes. We examine two behavioral factors that explain the gap, and find that both predict long-term outcomes across sales, leadership, and team settings. Their combined effect exceeds what ability or access alone can explain.</p>
+    <div id="fade"></div></div>
+    <p id="keywords"><b>Keywords:</b> success; communication; composure under pressure; leadership behavior</p>
+    </div>
+
+    <div class="pbody" id="pb1">
+      <h2>1. Introduction</h2>
+      <div class="cols">
+        <p>Why do some people achieve more than others who have comparable ability and the same chances? The question has occupied researchers in organizational behavior for decades. Early explanations pointed to cognitive aptitude and access to resources, treating outcomes as a function of what a person is given at the start.</p>
+        <p>Later work complicated this view. Studies of leaders, sales professionals, and student teams repeatedly report divergent trajectories among individuals who began in near-identical circumstances.<sup>1,2</sup> What separates them is rarely measured, and rarely named.</p>
+        <p>Here we examine two such behaviors. The first concerns how people respond to hardship and rejection. The second concerns how they speak of others, especially those who are not in the room. We ask whether either, alone or together, accounts for outcomes that talent and opportunity do not.</p>
+        <p>The paper proceeds as follows. Section 2 reviews prior work on persistence under rejection and on the role of language. Section 3 describes our approach, Section 4 reports what we found, and Section 5 discusses what follows for people who work with others under pressure.</p>
+      </div>
+    </div>
+
+    <div class="fnote">
+      <sup>*</sup>Corresponding author. E-mail: dr.mehta@ibor-institute.org<br>
+      Received 14 March 2026; revised 2 June 2026; accepted 21 July 2026. DOI: 10.1000/jblc.2026.0314
+    </div>
+    <div class="pgfoot"><span>J Behav Leadersh Commun 2026;14(3):1&ndash;3</span><span>1</span></div>
+  </div>
+
+  <!-- ===================== PAGE 2 ===================== -->
+  <div class="pg" id="pg2">
+    <div class="runhead"><span>Ice &amp; Sugar</span><i>Factors Affecting Success Beyond Talent and Opportunity</i></div>
+
+    <div class="pbody" id="pb2">
+      <h2>2. Literature Review</h2>
+      <p>A frequently cited starting point is the study of insurance sales agents at MetLife in the early 1980s. Conventional aptitude tests failed to predict who would persist through repeated rejection. What did predict it was something quieter: how agents explained their failures to themselves.<sup>1,2</sup></p>
+
+      <!-- Slide 2 frames this figure -->
+      <div id="fig">
+        <div id="figtag">METLIFE &nbsp;|&nbsp; 1983</div>
+      </div>
+      <p class="figcap"><b>Figure 1.</b> Agent retention, optimism, and sales performance in the MetLife studies. Bars in the middle panel are drawn to scale.</p>
+
+      <div class="cols" style="margin-top:34px">
+        <p>Parallel work on language suggests that framing shapes how information is processed, with negative frames proving harder to dislodge than positive ones.<sup>3</sup> Talk about absent others has likewise long been linked to social bonding within groups.<sup>4</sup></p>
+        <p>What remains unclear is whether these two strands, one concerning how people speak to themselves under pressure and the other how they speak of others, describe a common underlying capacity. We address this question directly.</p>
+      </div>
+    </div>
+
+    <div class="pgfoot"><span>&copy; 2026 Institute for Behavioral &amp; Organizational Research</span><span>2</span></div>
+  </div>
+
+  <!-- ===================== PAGE 3 ===================== -->
+  <div class="pg" id="pg3">
+    <div class="runhead"><span>Ice &amp; Sugar</span><i>Factors Affecting Success Beyond Talent and Opportunity</i></div>
+
+    <div class="pbody" id="pb3">
+      <h2>3. Methodology</h2>
+      <div class="cols">
+        <p>We reviewed published longitudinal studies of sales performance and team productivity, and supplemented them with case studies of leaders operating under sustained pressure. Cases were selected where ability and access were comparable across individuals.</p>
+        <p>For each case we recorded two behaviors: how the individual responded to hardship and rejection, and how they spoke of colleagues, particularly when those colleagues were absent.</p>
+      </div>
+
+      <h2>4. Findings</h2>
+      <div class="cols">
+        <p>Across settings, both behaviors were associated with stronger long-term outcomes. Individuals who stayed composed under rejection persisted longer, and teams whose members spoke well of one another in their absence showed higher trust and less free riding.</p>
+        <p>The effects were largest where the two behaviors appeared together. Neither ability nor access accounted for the difference.</p>
+      </div>
+
+      <h2>5. Discussion</h2>
+      <p>Our results suggest that outcomes among equally capable people are shaped less by what they are given than by how they respond and how they speak. Both are learnable, and both can be practiced deliberately.</p>
+
+      <h2>References</h2>
+      <div class="refs">
+        <p>1. Seligman, M. E. P., &amp; Schulman, P. (1986). Explanatory style as a predictor of productivity and quitting among life insurance sales agents. <i>Journal of Personality and Social Psychology, 50</i>(4), 832&ndash;838.</p>
+        <p>2. Seligman, M. E. P. (1990). <i>Learned Optimism.</i> New York: Knopf.</p>
+        <p>3. Ledgerwood, A., &amp; Boydstun, A. E. (2014). Sticky prospects: Loss frames are cognitively stickier than gain frames. <i>Journal of Experimental Psychology: General, 143</i>(1), 376&ndash;385.</p>
+        <p>4. Dunbar, R. I. M. (2004). Gossip in evolutionary perspective. <i>Review of General Psychology, 8</i>(2), 100&ndash;110.</p>
+      </div>
+    </div>
+
+    <div class="pgfoot"><span>J Behav Leadersh Commun 2026;14(3):1&ndash;3</span><span>3</span></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ------------------------------------------------------------------
+  // Figure 1 content (numbers only). Edit here.
+  // bars: [label, value, displayed value label, color]
+  // ------------------------------------------------------------------
+  var NAVY = "var(--chart-navy)", CRIMSON = "var(--chart-crimson)", MIST = "var(--chart-mist)";
+  var PANELS = [
+    { big: "$75M", cap: "per year, 5,000 agents", max: 8000,
+      bars: [["Hired", 5000, "5,000", NAVY], ["Year 1", 2500, "2,500", CRIMSON], ["Year 4", 1000, "1,000", CRIMSON]] },
+    { big: "+88%", cap: "top 10% vs bottom 10%", max: 215,
+      bars: [["Bottom 10%", 100, "", MIST], ["Top 10%", 188, "", NAVY]] },
+    { big: "250", cap: "Special Force", max: 90,
+      bars: [["Year 1", 21, "+21%", NAVY], ["Year 2", 57, "+57%", NAVY]] }
+  ];
+
+  var PLOT_H = 84, CARD_W = 238, GAP = 25.5, CARD_X0 = 42.5;
+  var fig = document.getElementById("fig");
+  PANELS.forEach(function (p, i) {
+    var card = document.createElement("div");
+    card.className = "card";
+    card.style.left = (CARD_X0 + i * (CARD_W + GAP)) + "px";
+    var bars = p.bars.map(function (b) {
+      return '<div class="col"><div class="val">' + b[2] + '</div>' +
+             '<div class="bar" style="--h:' + (b[1] / p.max * PLOT_H).toFixed(1) + 'px;background:' + b[3] + '"></div></div>';
+    }).join("");
+    var cats = p.bars.map(function (b) { return "<div>" + b[0] + "</div>"; }).join("");
+    card.innerHTML =
+      '<div class="big">' + p.big + '</div><div class="cap">' + p.cap + '</div>' +
+      '<div class="chart"><div class="plot">' + bars + '</div><div class="cats">' + cats + '</div></div>';
+    fig.appendChild(card);
+  });
+
+  // ------------------------------------------------------------------
+  // Camera. Each slide is a rectangle of the paper (x, y, w, h in paper px).
+  // To add a slide: add an entry with a region (a fixed rect, or a function
+  // that measures an element) and optional onArrive / onLeave.
+  // Keep regions 16:9 so the frame fills the screen exactly.
+  // ------------------------------------------------------------------
+  var world = document.getElementById("world");
+  function rectOf(el) {                       // position of an element inside the world
+    var x = 0, y = 0;
+    for (var e = el; e && e !== world; e = e.offsetParent) { x += e.offsetLeft; y += e.offsetTop; }
+    return { x: x, y: y, w: el.offsetWidth, h: el.offsetHeight };
+  }
+  function playTitleHighlight() {
+    var hl = document.querySelector("#title .hl");
+    if (!hl) return;
+    hl.classList.remove("is-on");
+    void hl.offsetWidth; // restart marker sweep
+    hl.classList.add("is-on");
+  }
+
+  var SLIDE_LABELS = [
+    "1 · Title & abstract",
+    "2 · MetLife figures",
+    "3 · Photo book · 1",
+    "4 · Photo book · 2",
+    "5 · Photo book · 3",
+    "6 · Photo book · 4",
+    "7 · Closing / section 3"
+  ];
+  var SLIDES = [
+    { region: function () { return { x: 23.5, y: 6, w: 851, h: 365 }; },   // top of page 1, same 7:3 frame as slide 2; names stay in the top 2/3
+      onArrive: playTitleHighlight },
+    { region: function () { var r = rectOf(fig); return { x: r.x, y: r.y - 4, w: r.w, h: r.w * 1536 / 3584 }; },                                   // Figure 1 on page 2
+      onArrive: function () { fig.classList.add("on"); },
+      onLeave:  function () { fig.classList.remove("on"); } },
+    // Flip book (after the MetLife figures): one step per photo, all sharing one camera frame
+    { book: 1, region: bookRegion }, { book: 2, region: bookRegion }, { book: 3, region: bookRegion }, { book: 4, region: bookRegion },
+    // Back on the paper: top of page 3 (placeholder frame until the next visual is built)
+    { book: 0, region: function () { var p = document.getElementById("pg3"); return { x: 23.5, y: p.offsetTop + 6, w: 851, h: 851 * 1536 / 3584 }; } }
+  ];
+  // Tight crop on the open right-hand photo page so the image reads large on the LED
+  function bookRegion() {
+    var w = 580;
+    var h = w * 1536 / 3584;
+    return { x: BOOK_S + 280 - w / 2, y: bookTop + 175 - h / 2, w: w, h: h };
+  }
+
+  // Quiet slate surface (no wood grain) — sits with the blue LED set behind paper/photos
+  (function () {
+    var TW = 1024, TH = 1024, c = document.createElement("canvas");
+    c.width = TW; c.height = TH;
+    var x2 = c.getContext("2d"), img = x2.createImageData(TW, TH), d = img.data;
+    var br = 22, bg = 28, bb = 40;
+    for (var y = 0; y < TH; y++) {
+      for (var x = 0; x < TW; x++) {
+        var n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+        n = n - Math.floor(n);
+        var m = Math.sin((x * 0.07) + (y * 0.11)) * 0.5 + 0.5;
+        var k = 0.92 + 0.08 * n + 0.04 * m;
+        var i = (y * TW + x) * 4;
+        d[i] = br * k; d[i + 1] = bg * k; d[i + 2] = bb * k; d[i + 3] = 255;
+      }
+    }
+    x2.putImageData(img, 0, 0);
+    document.documentElement.style.setProperty("--surface", "url(" + c.toDataURL("image/jpeg", 0.85) + ")");
+  })();
+
+  // ---------- Flip book: loads assets/book/1–4.(jpg|jpeg|png|webp) ----------
+  var BOOK_DIR = "assets/book/";
+  var BOOK_EXTS = ["jpg", "jpeg", "png", "webp", "JPG", "JPEG", "PNG", "WEBP"];
+  var BOOK_S = 1660, bookTop = 0;
+  var PH = [["#8fa6c4", "#d6c3a1"], ["#a9b99a", "#e3d8b0"], ["#c49a8f", "#e8d2b8"], ["#9aa3b8", "#cfd6dd"]];
+  var bookEl = document.getElementById("book"), LEAVES = [], bookRaf = null, lblock = null;
+
+  function easeIO(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function easeFlip(t) { return 1 - Math.pow(1 - t, 2.75); }
+
+  function renderLeaf(L) {
+    var th = Math.PI * L.p, c = Math.cos(th), s = Math.sin(th);
+    if (Math.abs(c) < 0.002) c = 0.002;
+    L.el.style.transform = "scaleX(" + c.toFixed(4) + ") scaleY(" + (1 + 0.07 * s).toFixed(4) + ")";
+    L.front.style.visibility = c > 0 ? "visible" : "hidden";
+    L.back.style.visibility = c > 0 ? "hidden" : "visible";
+    L.shade.style.opacity = (0.48 * s).toFixed(3);
+    L.el.style.zIndex = L.p < 0.5 ? (50 - L.i) : (10 + L.i);
+  }
+
+  function addLeaf(i, frontEl, cover) {
+    var el = document.createElement("div");
+    el.className = "bk-leaf" + (cover ? " bk-cover" : "");
+    el.innerHTML = '<div class="bk-face bk-front"><div class="bk-spine"></div></div>' +
+      '<div class="bk-face bk-back"><div class="bk-spine"></div></div><div class="bk-shade"></div>';
+    el.children[0].insertBefore(frontEl, el.children[0].firstChild);
+    bookEl.appendChild(el);
+    var L = { i: i, el: el, front: el.children[0], back: el.children[1], shade: el.children[2], p: 0, to: 0, anim: null };
+    LEAVES.push(L); renderLeaf(L);
+  }
+
+  function resolveBookImage(n) {
+    return new Promise(function (resolve) {
+      var i = 0;
+      (function tryNext() {
+        if (i >= BOOK_EXTS.length) { resolve(null); return; }
+        // No query-string cache-bust: breaks file:// opens in Finder/browser
+        var url = BOOK_DIR + n + "." + BOOK_EXTS[i++];
+        var probe = new Image();
+        probe.onload = function () { resolve(url); };
+        probe.onerror = tryNext;
+        probe.src = url;
+      })();
+    });
+  }
+
+  function makePlaceholder(kk) {
+    var ph = document.createElement("div");
+    ph.className = "bk-ph";
+    ph.style.background =
+      "radial-gradient(ellipse at 70% 25%, rgba(255,255,255,.25), transparent 45%)," +
+      "linear-gradient(145deg," + PH[kk][0] + "," + PH[kk][1] + ")";
+    ph.innerHTML =
+      '<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice">' +
+      '<circle cx="72" cy="16" r="8" fill="#fff" opacity=".5"/>' +
+      '<path d="M0 60 L28 26 L50 44 L66 30 L100 60Z" fill="#fff" opacity=".28"/>' +
+      '<path d="M0 60 L40 38 L58 48 L78 34 L100 60Z" fill="#0b1220" opacity=".18"/>' +
+      "</svg><b>PHOTO " + (kk + 1) + "</b>";
+    return ph;
+  }
+
+  function buildBook(imageUrls) {
+    window.__bookImages = imageUrls.map(function (u, i) {
+      return { n: i + 1, loaded: !!u, src: u || null };
+    });
+    bookEl.innerHTML = '<div class="bk-base"></div><div class="bk-lblock"></div><div class="bk-rblock"></div>';
+    lblock = bookEl.querySelector(".bk-lblock");
+    LEAVES = [];
+
+    var coverEl = document.createElement("div");
+    coverEl.className = "bk-title";
+    coverEl.innerHTML = '<span>Ice <em>&amp;</em> Sugar</span><i></i><p class="bk-sub">Smrutis</p>';
+    addLeaf(0, coverEl, true);
+
+    for (var kk = 0; kk < 4; kk++) {
+      var frame = document.createElement("div");
+      frame.className = "bk-frame";
+      if (imageUrls[kk]) {
+        var im = document.createElement("img");
+        im.src = imageUrls[kk];
+        im.alt = "Photo " + (kk + 1);
+        frame.appendChild(im);
+      } else {
+        frame.appendChild(makePlaceholder(kk));
+      }
+      addLeaf(kk + 1, frame, false);
+    }
+  }
+
+  var bookReady = Promise.all([1, 2, 3, 4].map(resolveBookImage)).then(buildBook);
+
+  // f = number of leaves turned to the left (0 = closed, 1 = cover open and photo 1 showing, ... 4 = photo 4 showing)
+  function setBook(f, o) {
+    o = o || {};
+    var now = performance.now(), changing = [];
+    LEAVES.forEach(function (L, i) {
+      var to = i < f ? 1 : 0;
+      if (L.to === to) return;
+      L.to = to; changing.push(L);
+    });
+    // leaves turning left go in order (cover first); leaves returning go last-in first-out so the cover lands on top
+    changing.sort(function (a, b) { return a.to === 1 ? a.i - b.i : b.i - a.i; });
+    changing.forEach(function (L, n) {
+      if (o.instant) { L.p = L.to; L.anim = null; renderLeaf(L); return; }
+      L.anim = { from: L.p, to: L.to, t0: now + (o.delay || 0) + n * (o.stagger || 0), dur: o.dur || 560 };
+    });
+    var showLeft = f > 0;
+    if (o.instant) lblock.style.opacity = showLeft ? 1 : 0;
+    else setTimeout(function () { lblock.style.opacity = showLeft ? 1 : 0; }, (o.delay || 0) + (showLeft ? 0.28 : 0.7) * (o.dur || 560));
+    if (!bookRaf) bookRaf = requestAnimationFrame(bookStep);
+  }
+
+  function bookStep(now) {
+    var active = false;
+    LEAVES.forEach(function (L) {
+      var a = L.anim;
+      if (!a) return;
+      var t = (now - a.t0) / a.dur;
+      active = true;
+      if (t < 0) return;
+      if (t >= 1) { L.p = a.to; L.anim = null; }
+      else { L.p = a.from + (a.to - a.from) * easeFlip(t); }
+      renderLeaf(L);
+    });
+    bookRaf = active ? requestAnimationFrame(bookStep) : null;
+  }
+
+  // ---------- Paper stack: pages lie in one pile; the top page turns to the left to reveal the next ----------
+  var PAGE_EL = ["pg1", "pg2", "pg3"].map(function (id, i) {
+    var el = document.getElementById(id);
+    var back = document.createElement("div"); back.className = "pg-back";
+    var shade = document.createElement("div"); shade.className = "pg-shade";
+    el.appendChild(back); el.appendChild(shade);
+    return { i: i, el: el, back: back, shade: shade, p: 0, to: 0, anim: null };
+  });
+  var pagesTarget = 0, pagesRaf = null;
+
+  function renderPage(P) {
+    var th = Math.PI * P.p, c = Math.cos(th), s = Math.sin(th);
+    if (Math.abs(c) < 0.002) c = 0.002;
+    P.el.style.transform = "scaleX(" + c.toFixed(4) + ")";
+    P.back.style.opacity = c > 0 ? 0 : 1;
+    P.shade.style.opacity = (0.4 * s).toFixed(3);
+    P.el.style.zIndex = P.p < 0.5 ? (50 - P.i) : (10 + P.i);
+  }
+  // Only pages that can be seen are drawn: the top page, the one under it, the last page turned, and any page mid-turn.
+  function applyPageVis() {
+    PAGE_EL.forEach(function (P) {
+      var vis = !!P.anim || (P.i >= pagesTarget - 1 && P.i <= pagesTarget + 1);
+      P.el.style.visibility = vis ? "visible" : "hidden";
+    });
+  }
+  PAGE_EL.forEach(renderPage);
+  applyPageVis();
+
+  // g = number of pages turned to the left
+  function setPages(g, o) {
+    o = o || {};
+    pagesTarget = g;
+    var now = performance.now(), changing = [];
+    PAGE_EL.forEach(function (P, i) {
+      var to = i < g ? 1 : 0;
+      if (P.to === to) return;
+      P.to = to; changing.push(P);
+    });
+    changing.sort(function (a, b) { return a.to === 1 ? a.i - b.i : b.i - a.i; });
+    changing.forEach(function (P, n) {
+      if (o.instant) { P.p = P.to; P.anim = null; renderPage(P); return; }
+      P.anim = { from: P.p, to: P.to, t0: now + (o.delay || 0) + n * (o.stagger || 0), dur: o.dur || 900 };
+    });
+    applyPageVis();
+    if (!pagesRaf) pagesRaf = requestAnimationFrame(pagesStep);
+  }
+
+  function pagesStep(now) {
+    var active = false;
+    PAGE_EL.forEach(function (P) {
+      var a = P.anim;
+      if (!a) return;
+      var t = (now - a.t0) / a.dur;
+      active = true;
+      if (t < 0) return;
+      if (t >= 1) { P.p = a.to; P.anim = null; }
+      else { P.p = a.from + (a.to - a.from) * easeIO(t); }
+      renderPage(P);
+    });
+    applyPageVis();
+    pagesRaf = active ? requestAnimationFrame(pagesStep) : null;
+  }
+
+  var PAGES_AT = [0, 1, 1, 1, 1, 1, 2];   // pages turned at each slide (slide 2 turns page 1, slide 7 turns page 2)
+  function schedulePages(prev, i) {
+    var pg = PAGES_AT[prev], g = PAGES_AT[i];
+    if (pg === g) return;
+    var a = SLIDES[prev].region(), b = SLIDES[i].region();
+    var far = Math.hypot((a.x + a.w / 2) - (b.x + b.w / 2), (a.y + a.h / 2) - (b.y + b.h / 2)) > 800;
+    if (g > pg) setPages(g, { delay: far ? 600 : 0, dur: 1000, stagger: 140 });   // long pans: turn partway through
+    else setPages(g, { delay: 0, dur: 900, stagger: 90 });
+  }
+
+  // ---- Cheaper page turns (these definitions replace the ones above): the real page never scales.
+  // A blank sheet turns in its place while the text fades out, so turning costs almost nothing to draw. ----
+  PAGE_EL.forEach(function (P) {
+    var pr = document.createElement("div");
+    pr.className = "pg-proxy";
+    pr.innerHTML = '<div class="pg-pshade"></div>';
+    document.getElementById("world").appendChild(pr);
+    P.proxy = pr; P.pshade = pr.firstChild;
+  });
+  var pagesDir = 1;
+
+  function renderPage(P) {
+    if (!P.proxy) return;
+    var th = Math.PI * P.p, c = Math.cos(th), s = Math.sin(th);
+    if (Math.abs(c) < 0.002) c = 0.002;
+    var real = P.p > 0 ? 0 : 1, prox = P.p > 0 ? 1 : 0;
+    P.el.style.opacity = real >= 1 ? "" : real.toFixed(3);
+    P.proxy.style.opacity = prox >= 1 ? "" : prox.toFixed(3);
+    P.proxy.style.transform = "scaleX(" + c.toFixed(4) + ") scaleY(" + (1 + 0.04 * s).toFixed(4) + ")";
+    P.pshade.style.opacity = (0.5 * s).toFixed(3);
+    P.el.style.zIndex = 100 - 2 * P.i;
+    P.proxy.style.zIndex = P.p < 0.5 ? (101 - 2 * P.i) : (10 + P.i);
+  }
+
+  // Draw only what can be seen: the top page, the page under it while one is returning, the last page turned, and any page mid-turn.
+  function applyPageVis() {
+    var any = PAGE_EL.some(function (P) { return !!P.anim; });
+    PAGE_EL.forEach(function (P) {
+      if (!P.proxy) return;
+      var i = P.i;
+      var realVis = P.p < 1 && (i === pagesTarget || !!P.anim || (any && pagesDir < 0 && i === pagesTarget + 1));
+      var proxyVis = !!P.anim || (P.p === 1 && i === pagesTarget - 1);
+      P.el.style.visibility = realVis ? "visible" : "hidden";
+      P.proxy.style.visibility = proxyVis ? "visible" : "hidden";
+    });
+  }
+
+  function setPages(g, o) {
+    o = o || {};
+    pagesDir = g >= pagesTarget ? 1 : -1;
+    pagesTarget = g;
+    var now = performance.now(), changing = [];
+    PAGE_EL.forEach(function (P, i) {
+      var to = i < g ? 1 : 0;
+      if (P.to === to) return;
+      P.to = to; changing.push(P);
+    });
+    changing.sort(function (a, b) { return a.to === 1 ? a.i - b.i : b.i - a.i; });
+    changing.forEach(function (P, n) {
+      if (o.instant) { P.p = P.to; P.anim = null; renderPage(P); return; }
+      P.anim = { from: P.p, to: P.to, t0: now + (o.delay || 0) + n * (o.stagger || 0), dur: o.dur || 720 };
+    });
+    applyPageVis();
+    if (!pagesRaf) pagesRaf = requestAnimationFrame(pagesStep);
+  }
+
+  PAGE_EL.forEach(renderPage);
+  applyPageVis();
+
+  // The camera never moves while a page turns: the turn happens before or after the pan (see go()).
+  function schedulePages(prev, i, delay) {
+    var pg = PAGES_AT[prev], g = PAGES_AT[i];
+    if (pg === g) return;
+    setPages(g, { delay: delay || 0, dur: 720, stagger: 70 });
+  }
+
+  // Same as before, plus timing of the turn for the D readout.
+  var TURN = null, turnLast = 0, turnSum = 0, turnN = 0, turnWorst = 0;
+  function pagesStep(now) {
+    var active = false, moving = false;
+    PAGE_EL.forEach(function (P) {
+      var a = P.anim;
+      if (!a) return;
+      var t = (now - a.t0) / a.dur;
+      active = true;
+      if (t < 0) return;
+      moving = true;
+      if (t >= 1) { P.p = a.to; P.anim = null; }
+      else { P.p = a.from + (a.to - a.from) * easeFlip(t); }
+      renderPage(P);
+    });
+    if (moving) {
+      if (turnLast) { var dt = now - turnLast; turnSum += dt; turnN++; if (dt > turnWorst) turnWorst = dt; }
+      turnLast = now;
+    }
+    applyPageVis();
+    if (!active && turnN) { TURN = { avg: turnSum / turnN, worst: turnWorst }; turnLast = 0; turnSum = 0; turnN = 0; turnWorst = 0; showDiag(); }
+    pagesRaf = active ? requestAnimationFrame(pagesStep) : null;
+  }
+
+  // One arrow = one clear beat: photo flips are snappy; open/close lands as the camera arrives.
+  function scheduleBook(prev, i) {
+    var pf = SLIDES[prev].book || 0, f = SLIDES[i].book || 0, o;
+    if (pf === f) return;
+    if (pf > 0 && f > 0) o = { delay: 40, dur: 520, stagger: 0 };
+    else if (f > 0) o = (f === 1) ? { delay: 380, dur: 680, stagger: 0 } : { delay: 380, dur: 620, stagger: 90 };
+    else o = { delay: 0, dur: 620, stagger: 60 };
+    setBook(f, o);
+  }
+
+  function layoutBook() {
+    bookTop = Math.round(rectOf(fig).y + 8);
+    bookEl.style.left = BOOK_S + "px";
+    bookEl.style.top = bookTop + "px";
+  }
+
+  var STATS = null, RENDERER = "unknown";
+  try { var gl = document.createElement("canvas").getContext("webgl"); var ext = gl && gl.getExtension("WEBGL_debug_renderer_info"); if (ext) RENDERER = gl.getParameter(ext.UNMASKED_RENDERER_WEBGL); } catch (e) {}
+  var diag = document.getElementById("diag");
+  function showDiag() {
+    diag.textContent = "D: hide this | G: stage-safe guide\nGPU: " + RENDERER + "\nScreen: " + innerWidth + "x" + innerHeight + " @" + devicePixelRatio + "x\n" +
+      (STATS ? "Last move: avg " + STATS.avg.toFixed(1) + " ms, worst " + STATS.worst.toFixed(0) + " ms, " + STATS.frames + " frames" : "Change slide to measure") + (TURN ? "\nLast page turn: avg " + TURN.avg.toFixed(1) + " ms, worst " + TURN.worst.toFixed(0) + " ms" : "");
+  }
+  var W = innerWidth, H = innerHeight;
+  var idx = 0, cam = null, raf = null;
+
+  function target(i) {
+    var r = SLIDES[i].region();
+    return { cx: r.x + r.w / 2, cy: r.y + r.h / 2, s: Math.min(W / r.w, H / r.h) };
+  }
+  function render() {
+    world.style.transform = "translate(" + (W / 2 - cam.cx * cam.s) + "px," + (H / 2 - cam.cy * cam.s) + "px) scale(" + cam.s + ")";
+  }
+  function smoother(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+
+  function flightMs(i) {
+    var to = target(i), dist = Math.hypot(to.cx - cam.cx, to.cy - cam.cy);
+    // Snappier pans: short nudges ~650ms, long trips cap ~1350ms
+    return 650 + Math.min(700, dist * 0.42);
+  }
+  function flyTo(i, prev, delay) {
+    var from = { cx: cam.cx, cy: cam.cy, s: cam.s }, to = target(i);
+    var dist = Math.hypot(to.cx - from.cx, to.cy - from.cy);
+    var scaleJump = Math.abs(Math.log(to.s / from.s));
+    // Only a light pull-back on long relocates — short moves stay locked on content
+    var dip = dist < 400 && scaleJump < 0.15 ? 0 : Math.max(0.06, Math.min(0.32, dist / 2200));
+    var dur = flightMs(i);
+    var t0 = performance.now() + (delay || 0), last = t0, worst = 0, sum = 0, n = 0;
+    if (raf) cancelAnimationFrame(raf);
+    (function step(now) {
+      if (now < t0) { raf = requestAnimationFrame(step); return; }
+      if (now > t0) { var dt = now - last; sum += dt; n++; if (dt > worst) worst = dt; }
+      last = now;
+      var t = Math.min(1, (now - t0) / dur), e = smoother(t);
+      cam.cx = from.cx + (to.cx - from.cx) * e;
+      cam.cy = from.cy + (to.cy - from.cy) * e;
+      var logS = Math.log(from.s) + (Math.log(to.s) - Math.log(from.s)) * e;
+      cam.s = Math.exp(logS) / (1 + dip * Math.sin(Math.PI * t));
+      render();
+      if (t < 1) { raf = requestAnimationFrame(step); }
+      else {
+        raf = null;
+        STATS = { avg: sum / Math.max(1, n), worst: worst, frames: n };
+        showDiag();
+        if (prev !== undefined && prev !== i && SLIDES[prev].onLeave) SLIDES[prev].onLeave();
+        if (SLIDES[i].onArrive) SLIDES[i].onArrive();
+        notifyDeckState();
+      }
+    })(t0);
+  }
+
+  function go(i) {
+    i = Math.max(0, Math.min(SLIDES.length - 1, i));
+    if (i === idx) return;
+    var prev = idx;
+    idx = i;
+    document.body.dataset.slide = idx;
+    history.replaceState(null, "", "#" + (idx + 1));
+    scheduleBook(prev, idx);
+    var moves = JSON.stringify(SLIDES[prev].region()) !== JSON.stringify(SLIDES[idx].region());
+    var turns = PAGES_AT[prev] !== PAGES_AT[idx];
+    var leavingBook = (SLIDES[prev].book || 0) > 0 && !(SLIDES[idx].book > 0);
+    var TURN_MS = 760, camDelay = 0, pageDelay = 0;
+    if (turns && moves) {
+      // Leaving the photo book: turn to the next paper page BEFORE flying back,
+      // otherwise the camera lands on slide/page 2 and only then reveals section 3.
+      if (prev === 0 || prev === SLIDES.length - 1 || leavingBook) {
+        camDelay = TURN_MS;
+      } else {
+        pageDelay = flightMs(idx) + 40; // camera first, then turn at the pile
+      }
+    }
+    schedulePages(prev, idx, pageDelay);
+    if (moves) flyTo(idx, prev, camDelay);
+    else notifyDeckState();
+  }
+
+  function notifyDeckState() {
+    var payload = window.deckGetState ? window.deckGetState() : null;
+    if (!payload) return;
+    try { parent.postMessage({ source: "deck", type: "state", state: payload }, "*"); } catch (err) { /* ignore */ }
+    try {
+      if (!window.__ledBus) window.__ledBus = new BroadcastChannel("ice-sugar-led");
+      window.__ledBus.postMessage({ type: "state", state: payload, from: "deck" });
+    } catch (err) { /* ignore */ }
+  }
+
+  function start() {
+    var n = parseInt(location.hash.slice(1), 10);
+    idx = (n >= 1 && n <= SLIDES.length) ? n - 1 : 0;
+    document.body.dataset.slide = idx;
+    layoutBook(); setBook(SLIDES[idx].book || 0, { instant: true }); setPages(PAGES_AT[idx], { instant: true });
+    cam = target(idx); render();
+    if (SLIDES[idx].onArrive) setTimeout(SLIDES[idx].onArrive, 300);
+    else if (idx === 0) setTimeout(playTitleHighlight, 300);
+    notifyDeckState();
+  }
+
+  // Parent shell can call this so arrows work even when the iframe isn't focused.
+  window.deckNav = function (delta) { go(idx + (delta < 0 ? -1 : 1)); };
+  window.deckSetDark = function (on) {
+    document.documentElement.setAttribute("data-theme", on ? "dark" : "light");
+    notifyDeckState();
+    return !!on;
+  };
+  window.deckToggleDark = function () {
+    var on = document.documentElement.getAttribute("data-theme") !== "dark";
+    return window.deckSetDark(on);
+  };
+  window.deckIsDark = function () {
+    return document.documentElement.getAttribute("data-theme") === "dark";
+  };
+  // Jump to a slide instantly (for exports / deep links)
+  window.deckGoTo = function (i) {
+    i = Math.max(0, Math.min(SLIDES.length - 1, i | 0));
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+    var prev = idx;
+    if (SLIDES[prev] && SLIDES[prev].onLeave && prev !== i) SLIDES[prev].onLeave();
+    idx = i;
+    document.body.dataset.slide = idx;
+    history.replaceState(null, "", "#" + (idx + 1));
+    setBook(SLIDES[idx].book || 0, { instant: true });
+    setPages(PAGES_AT[idx], { instant: true });
+    cam = target(idx); render();
+    if (SLIDES[idx].onArrive) SLIDES[idx].onArrive();
+    notifyDeckState();
+  };
+  window.deckSlideCount = function () { return SLIDES.length; };
+  window.deckReplayTitle = function () {
+    if (typeof playTitleHighlight === "function") playTitleHighlight();
+  };
+  window.deckGetState = function () {
+    return {
+      slide: idx,
+      total: SLIDES.length,
+      dark: window.deckIsDark(),
+      labels: SLIDE_LABELS.slice(),
+      book: window.__bookImages || []
+    };
+  };
+
+  addEventListener("keydown", function (e) {
+    var k = e.key;
+    var arrow = k === "ArrowRight" || k === "ArrowLeft" || k === "ArrowUp" || k === "ArrowDown";
+    // All arrow keys advance; Shift+arrow (or Backspace / PageUp) goes back
+    if (arrow) { e.preventDefault(); go(idx + (e.shiftKey ? -1 : 1)); }
+    else if (k === "PageDown" || k === " " || k === "Enter") { e.preventDefault(); go(idx + 1); }
+    else if (k === "PageUp" || k === "Backspace") { e.preventDefault(); go(idx - 1); }
+    else if (k === "g" || k === "G") { document.body.classList.toggle("guide"); }
+    else if (k === "d" || k === "D") { document.body.classList.toggle("diag"); showDiag(); }
+    else if (k === "Home") { go(0); }
+    else if (k === "End") { go(SLIDES.length - 1); }
+    else if (k === "f" || k === "F") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+  // Left half = previous, right half = next (clearer for presenters / audience cues)
+  addEventListener("click", function (e) { go(e.clientX < W * 0.5 ? idx - 1 : idx + 1); });
+
+  addEventListener("resize", function () {
+    W = innerWidth; H = innerHeight;
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+    cam = target(idx); render();
+  });
+
+  var idleTimer;
+  function wake() { document.body.classList.remove("idle"); clearTimeout(idleTimer); idleTimer = setTimeout(function () { document.body.classList.add("idle"); }, 2500); }
+  addEventListener("mousemove", wake); wake();
+
+  Promise.all([
+    bookReady,
+    document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()
+  ]).then(start);
+})();
+</script>
+</body>
+</html>

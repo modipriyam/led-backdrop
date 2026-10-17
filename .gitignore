@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+*.log
+/tmp/
+led-backdrop.zip
+led-backdrop-slides-3584x1536.zip
+exports/
