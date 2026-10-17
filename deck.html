@@ -1101,8 +1101,15 @@
       }
     }
     schedulePages(prev, idx, pageDelay);
-    if (moves) flyTo(idx, prev, camDelay);
-    else notifyDeckState();
+    if (moves) {
+      flyTo(idx, prev, camDelay);
+    } else {
+      // Same camera region (e.g. open bumper → title): still run leave/arrive
+      // so bumpers hide/show. flyTo is what normally calls these.
+      if (SLIDES[prev] && SLIDES[prev].onLeave) SLIDES[prev].onLeave();
+      if (SLIDES[idx] && SLIDES[idx].onArrive) SLIDES[idx].onArrive();
+      notifyDeckState();
+    }
   }
 
   function notifyDeckState() {
