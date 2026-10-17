@@ -477,6 +477,191 @@
       font-size: clamp(1.15rem, 4.6vw, 1.7rem);
     }
   }
+
+  /* Full-stage research plate — HTML recreation of Trevor infographic */
+  .slide-plate {
+    position: fixed;
+    inset: 0;
+    z-index: 36;
+    margin: 0;
+    padding: 0;
+    background: #f4f6f8;
+    color: #1a2433;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    overflow: hidden;
+    font-family: Manrope, "Avenir Next", "Segoe UI", sans-serif;
+  }
+  .slide-plate.is-on {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .trevor {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 2.2% 2.4% 1.8%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.6%;
+  }
+  .trevor * { box-sizing: border-box; }
+  .trevor-head {
+    display: flex;
+    align-items: center;
+    gap: 1.2em;
+    flex: 0 0 auto;
+  }
+  .trevor-head .line {
+    flex: 1;
+    height: 1px;
+    background: #c5ccd6;
+  }
+  .trevor-head .titles {
+    text-align: center;
+    flex: 0 0 auto;
+    padding: 0 0.4em;
+  }
+  .trevor-head h2 {
+    margin: 0;
+    font-family: "Cormorant Garamond", Cambria, Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(1.35rem, 3.4vw, 2.35rem);
+    letter-spacing: 0.02em;
+    color: #152033;
+    line-height: 1.05;
+  }
+  .trevor-head p {
+    margin: 0.28em 0 0;
+    font-size: clamp(0.55rem, 1.15vw, 0.78rem);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-indent: 0.28em;
+    text-transform: uppercase;
+    color: #7a8494;
+  }
+  .trevor-row {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0.7%;
+    align-items: stretch;
+  }
+  .trevor-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5c6573;
+    font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+    line-height: 1;
+    padding: 0 0.1em;
+  }
+  .t-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    border: 1px solid #d5dde8;
+    border-radius: 10px;
+    padding: 3.2% 3.4% 2.6%;
+    background: linear-gradient(180deg, #f3f7fb 0%, #e8eef5 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  }
+  .t-card.t-discover {
+    background: linear-gradient(180deg, #fbf6ee 0%, #f3ebe0 100%);
+    border-color: #e2d5c4;
+  }
+  .t-card h3 {
+    margin: 0 0 0.55em;
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    font-family: "Cormorant Garamond", Cambria, Georgia, serif;
+    font-size: clamp(0.95rem, 1.85vw, 1.35rem);
+    font-weight: 600;
+    color: #152033;
+    line-height: 1.15;
+  }
+  .t-card .num {
+    flex: 0 0 auto;
+    width: 1.35em;
+    height: 1.35em;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: Manrope, sans-serif;
+    font-size: 0.72em;
+    font-weight: 700;
+    color: #fff;
+    background: #243a5c;
+  }
+  .t-card.t-discover .num { background: #b07a45; }
+  .t-card .body {
+    margin: 0;
+    font-size: clamp(0.62rem, 1.22vw, 0.92rem);
+    line-height: 1.35;
+    color: #2a3444;
+  }
+  .t-card .body strong { color: #152033; font-weight: 700; }
+  .t-viz {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0.55em 0;
+  }
+  .t-card .cap {
+    margin: 0;
+    padding: 0.45em 0.55em;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.55);
+    font-family: "Cormorant Garamond", Cambria, Georgia, serif;
+    font-size: clamp(0.48rem, 0.95vw, 0.7rem);
+    font-style: italic;
+    line-height: 1.3;
+    color: #4a5564;
+  }
+  .t-card .cap b { font-style: italic; font-weight: 600; color: #2a3444; }
+  .t-callout {
+    margin: 0.45em 0 0.2em;
+    padding: 0.5em 0.65em;
+    border-radius: 6px;
+    border: 1px solid #e6c86a;
+    background: #fff8dc;
+    font-size: clamp(0.58rem, 1.1vw, 0.82rem);
+    line-height: 1.32;
+    color: #2a3444;
+  }
+  .t-callout strong { color: #152033; }
+
+  /* Inline SVG icon scenes */
+  .viz-people, .viz-teams, .viz-gossip {
+    width: 100%;
+    max-height: 100%;
+  }
+  .viz-people { max-width: 11em; }
+  .viz-teams { max-width: 100%; }
+  .viz-gossip { max-width: 15em; }
+
+  @media (max-width: 640px) {
+    .trevor { padding: 3% 3.2% 2.4%; gap: 2%; overflow: auto; }
+    .trevor-row {
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+    }
+    .trevor-arrow {
+      transform: rotate(90deg);
+      padding: 0.1em 0;
+      font-size: 1.2rem;
+    }
+    .t-card { padding: 0.7rem 0.75rem 0.65rem; }
+    .t-viz { margin: 0.4em 0; min-height: 4.5rem; }
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -504,6 +689,116 @@
     <p class="authors">Dr. Shah &nbsp;·&nbsp; Dr. Mehta</p>
   </div>
 </div>
+<section id="plate-trevor" class="slide-plate" aria-hidden="true" aria-label="Dr. Trevor and Team management research">
+  <div class="trevor">
+    <header class="trevor-head">
+      <span class="line" aria-hidden="true"></span>
+      <div class="titles">
+        <h2>Dr. Trevor and Team</h2>
+        <p>Management Researchers</p>
+      </div>
+      <span class="line" aria-hidden="true"></span>
+    </header>
+    <div class="trevor-row">
+      <article class="t-card">
+        <h3><span class="num">1</span> Research Question</h3>
+        <p class="body">Management researchers wanted to challenge the blanket assumption that <strong>all workplace gossip is toxic.</strong></p>
+        <div class="t-viz" aria-hidden="true">
+          <svg class="viz-people" viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="100" cy="92" rx="70" ry="10" fill="#d7e0ec"/>
+            <circle cx="68" cy="58" r="16" fill="#8fa6c4"/>
+            <path d="M44 92c2-18 12-28 24-28s22 10 24 28" fill="#8fa6c4"/>
+            <circle cx="100" cy="48" r="20" fill="#3d5a80"/>
+            <path d="M70 92c3-22 15-34 30-34s27 12 30 34" fill="#3d5a80"/>
+            <circle cx="132" cy="58" r="16" fill="#a8b9ce"/>
+            <path d="M108 92c2-18 12-28 24-28s22 10 24 28" fill="#a8b9ce"/>
+            <ellipse cx="62" cy="28" rx="14" ry="11" fill="#c5d0de"/>
+            <ellipse cx="100" cy="18" rx="18" ry="13" fill="#2f4a6e"/>
+            <ellipse cx="138" cy="28" rx="14" ry="11" fill="#c5d0de"/>
+            <circle cx="92" cy="18" r="2.2" fill="#fff"/><circle cx="100" cy="18" r="2.2" fill="#fff"/><circle cx="108" cy="18" r="2.2" fill="#fff"/>
+          </svg>
+        </div>
+        <p class="cap"><b>Figure 1.</b> Investigating whether workplace gossip is uniformly detrimental or if certain types of gossip can have positive effects.</p>
+      </article>
+      <div class="trevor-arrow" aria-hidden="true">➜</div>
+      <article class="t-card">
+        <h3><span class="num">2</span> The Study</h3>
+        <p class="body">They isolated <strong>63</strong> distinct project teams to track the exact behavioral ripples of back-and-forth peer chatter.</p>
+        <div class="t-viz" aria-hidden="true">
+          <svg class="viz-teams" viewBox="0 0 280 130" xmlns="http://www.w3.org/2000/svg">
+            <g font-family="Manrope, Avenir Next, sans-serif" font-size="7" fill="#5a6575" text-anchor="middle">
+              <g transform="translate(20,8)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#c8daf0"/>
+                <circle cx="12" cy="18" r="5" fill="#3d5a80"/><circle cx="22" cy="14" r="6" fill="#2f4a6e"/><circle cx="32" cy="18" r="5" fill="#5a7aa0"/>
+                <text x="22" y="48">Team 1</text>
+              </g>
+              <g transform="translate(85,8)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#d4e8c8"/>
+                <circle cx="12" cy="18" r="5" fill="#4a7a45"/><circle cx="22" cy="14" r="6" fill="#3d6b38"/><circle cx="32" cy="18" r="5" fill="#6a9a55"/>
+                <text x="22" y="48">Team 2</text>
+              </g>
+              <g transform="translate(150,8)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#f0dcc0"/>
+                <circle cx="12" cy="18" r="5" fill="#b07a40"/><circle cx="22" cy="14" r="6" fill="#9a6835"/><circle cx="32" cy="18" r="5" fill="#c99455"/>
+                <text x="22" y="48">Team 3</text>
+              </g>
+              <g transform="translate(215,8)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#ddd0f0"/>
+                <circle cx="12" cy="18" r="5" fill="#6a5590"/><circle cx="22" cy="14" r="6" fill="#584878"/><circle cx="32" cy="18" r="5" fill="#8570a8"/>
+                <text x="22" y="48">Team 4</text>
+              </g>
+              <text x="140" y="72" font-size="16" fill="#8a94a3">···</text>
+              <g transform="translate(20,78)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#c8daf0"/>
+                <circle cx="12" cy="18" r="5" fill="#3d5a80"/><circle cx="22" cy="14" r="6" fill="#2f4a6e"/><circle cx="32" cy="18" r="5" fill="#5a7aa0"/>
+                <text x="22" y="48">Team 60</text>
+              </g>
+              <g transform="translate(85,78)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#d4e8c8"/>
+                <circle cx="12" cy="18" r="5" fill="#4a7a45"/><circle cx="22" cy="14" r="6" fill="#3d6b38"/><circle cx="32" cy="18" r="5" fill="#6a9a55"/>
+                <text x="22" y="48">Team 61</text>
+              </g>
+              <g transform="translate(150,78)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#f0dcc0"/>
+                <circle cx="12" cy="18" r="5" fill="#b07a40"/><circle cx="22" cy="14" r="6" fill="#9a6835"/><circle cx="32" cy="18" r="5" fill="#c99455"/>
+                <text x="22" y="48">Team 62</text>
+              </g>
+              <g transform="translate(215,78)">
+                <ellipse cx="22" cy="28" rx="22" ry="10" fill="#ddd0f0"/>
+                <circle cx="12" cy="18" r="5" fill="#6a5590"/><circle cx="22" cy="14" r="6" fill="#584878"/><circle cx="32" cy="18" r="5" fill="#8570a8"/>
+                <text x="22" y="48">Team 63</text>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <p class="cap"><b>Figure 2.</b> Study design: 63 distinct project teams were isolated and observed to track behavioral outcomes of peer-to-peer gossip.</p>
+      </article>
+      <div class="trevor-arrow" aria-hidden="true">➜</div>
+      <article class="t-card t-discover">
+        <h3><span class="num">3</span> The Discovery (Positive Gossip)</h3>
+        <p class="body">The researchers isolated a specific behavior:</p>
+        <div class="t-callout"><strong>Positive Gossip</strong> — praising, validating, or highlighting a coworker’s strengths to a third party when that coworker is completely out of the room.</div>
+        <div class="t-viz" aria-hidden="true">
+          <svg class="viz-gossip" viewBox="0 0 260 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="36" cy="42" r="14" fill="#3d5a80"/>
+            <path d="M16 88c2-20 12-30 20-30s18 10 20 30" fill="#3d5a80"/>
+            <circle cx="78" cy="42" r="14" fill="#5a7aa0"/>
+            <path d="M58 88c2-20 12-30 20-30s18 10 20 30" fill="#5a7aa0"/>
+            <ellipse cx="58" cy="22" rx="16" ry="12" fill="#2f4a6e"/>
+            <path d="M52 18h4v8h-4zm6 2.5l5-3.5v8l-5-3.5z" fill="#fff"/>
+            <path d="M98 48c28-22 55-10 78 8" fill="none" stroke="#9aa3b0" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <polygon points="172,52 164,46 168,56" fill="#9aa3b0"/>
+            <rect x="188" y="18" width="62" height="70" rx="4" fill="none" stroke="#b0b8c4" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <circle cx="219" cy="42" r="12" fill="#c5ccd6"/>
+            <path d="M201 82c2-16 10-24 18-24s16 8 18 24" fill="#c5ccd6"/>
+            <text x="219" y="96" text-anchor="middle" font-family="Manrope, sans-serif" font-size="7" fill="#6a7382">Out of the room</text>
+          </svg>
+        </div>
+        <p class="cap"><b>Figure 3.</b> Positive gossip: praising, validating, or highlighting a coworker’s strengths to a third party when that coworker is not present.</p>
+      </article>
+    </div>
+  </div>
+</section>
 <div id="world">
   <div id="desk"></div>
   <div id="book"></div>
@@ -650,6 +945,12 @@
 
   var bumperOpen = document.getElementById("bumper-open");
   var bumperClose = document.getElementById("bumper-close");
+  var plateTrevor = document.getElementById("plate-trevor");
+  function setPlate(el, on) {
+    if (!el) return;
+    el.classList.toggle("is-on", !!on);
+    el.setAttribute("aria-hidden", on ? "false" : "true");
+  }
   function setBumper(el, on) {
     if (!el) return;
     el.classList.toggle("is-on", !!on);
@@ -665,7 +966,7 @@
 
   var SLIDE_LABELS = [
     "1 · Opening",
-    "2 · Title & abstract",
+    "2 · Trevor research",
     "3 · MetLife figures",
     "4 · Photo book · 1",
     "5 · Photo book · 2",
@@ -681,9 +982,11 @@
       onArrive: function () { setBumper(bumperOpen, true); },
       onLeave: function () { setBumper(bumperOpen, false); }
     },
+    // Full-stage Trevor / management researchers plate (replaces abstract zoom)
     {
       region: titleRegion,
-      onArrive: playTitleHighlight
+      onArrive: function () { setPlate(plateTrevor, true); },
+      onLeave: function () { setPlate(plateTrevor, false); }
     },
     {
       region: function () { var r = rectOf(fig); return { x: r.x, y: r.y - 4, w: r.w, h: r.w * 1536 / 3584 }; },
