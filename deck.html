@@ -364,12 +364,134 @@
   /* Stage-safe guide (press G): the bottom third of the screen is covered by actors and props. Keep key content above the line. */
   #guide { position: fixed; left: 0; right: 0; top: 66.667%; bottom: 0; z-index: 98; pointer-events: none; display: none; background: rgba(220,0,0,.14); border-top: 3px dashed rgba(220,0,0,.85); }
   body.guide #guide { display: block; }
+
+  /* Static open / close bumpers — fill the stage, no camera motion */
+  .bumper {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.45s ease, visibility 0.45s ease;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 42%, rgba(40, 70, 110, 0.45), transparent 70%),
+      linear-gradient(165deg, #121820 0%, #0a0e14 55%, #070a10 100%);
+  }
+  .bumper.is-on {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .bumper .inner {
+    text-align: center;
+    padding: 6% 8%;
+    max-width: 920px;
+  }
+  .bumper .eyebrow {
+    margin: 0 0 1.1em;
+    font-family: Manrope, "Avenir Next", sans-serif;
+    font-size: clamp(0.7rem, 1.4vw, 0.95rem);
+    font-weight: 500;
+    letter-spacing: 0.42em;
+    text-indent: 0.42em;
+    text-transform: uppercase;
+    color: rgba(190, 210, 240, 0.7);
+  }
+  .bumper .mark {
+    margin: 0;
+    font-family: "Cormorant Garamond", Cambria, Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(2.6rem, 7.5vw, 5.2rem);
+    letter-spacing: 0.1em;
+    line-height: 0.95;
+    color: #f2f7ff;
+    text-shadow: 0 0 28px rgba(120, 180, 255, 0.35);
+  }
+  .bumper .mark em {
+    font-style: italic;
+    font-weight: 500;
+    color: #f0c97a;
+    letter-spacing: 0.06em;
+  }
+  .bumper .rule {
+    display: block;
+    width: min(42%, 280px);
+    height: 2px;
+    margin: 1.1em auto 0.95em;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(240, 201, 122, 0.25),
+      rgba(240, 201, 122, 0.95),
+      rgba(160, 210, 255, 0.7),
+      rgba(240, 201, 122, 0.95),
+      rgba(240, 201, 122, 0.25),
+      transparent
+    );
+  }
+  .bumper .sub {
+    margin: 0;
+    font-family: Manrope, "Avenir Next", sans-serif;
+    font-size: clamp(0.85rem, 1.8vw, 1.25rem);
+    font-weight: 400;
+    letter-spacing: 0.55em;
+    text-indent: 0.55em;
+    text-transform: uppercase;
+    color: rgba(210, 228, 255, 0.88);
+  }
+  .bumper .tagline {
+    margin: 1.4em 0 0;
+    font-family: "Cormorant Garamond", Cambria, Georgia, serif;
+    font-size: clamp(1.05rem, 2.2vw, 1.55rem);
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: rgba(220, 230, 245, 0.78);
+    max-width: 28em;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.35;
+  }
+  .bumper .authors {
+    margin: 1.6em 0 0;
+    font-family: Manrope, "Avenir Next", sans-serif;
+    font-size: clamp(0.75rem, 1.35vw, 0.95rem);
+    letter-spacing: 0.12em;
+    color: rgba(180, 200, 230, 0.75);
+  }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body data-slide="0">
 
 <div id="diag"></div>
 <div id="guide"></div>
+<div id="bumper-open" class="bumper" aria-hidden="true">
+  <div class="inner">
+    <p class="eyebrow">Presented research</p>
+    <p class="mark">Ice <em>&amp;</em> Sugar</p>
+    <span class="rule" aria-hidden="true"></span>
+    <p class="sub">Research</p>
+    <p class="tagline">Factors Affecting Success Beyond Talent and Opportunity</p>
+    <p class="authors">Dr. Shah &nbsp;·&nbsp; Dr. Mehta</p>
+  </div>
+</div>
+<div id="bumper-close" class="bumper" aria-hidden="true">
+  <div class="inner">
+    <p class="eyebrow">Thank you</p>
+    <p class="mark">Ice <em>&amp;</em> Sugar</p>
+    <span class="rule" aria-hidden="true"></span>
+    <p class="sub">Research</p>
+    <p class="tagline">Questions &amp; discussion</p>
+    <p class="authors">Dr. Shah &nbsp;·&nbsp; Dr. Mehta</p>
+  </div>
+</div>
 <div id="world">
   <div id="desk"></div>
   <div id="book"></div>
@@ -514,25 +636,59 @@
     hl.classList.add("is-on");
   }
 
+  var bumperOpen = document.getElementById("bumper-open");
+  var bumperClose = document.getElementById("bumper-close");
+  function setBumper(el, on) {
+    if (!el) return;
+    el.classList.toggle("is-on", !!on);
+    el.setAttribute("aria-hidden", on ? "false" : "true");
+  }
+  function titleRegion() {
+    return { x: 23.5, y: 6, w: 851, h: 365 };
+  }
+  function closingRegion() {
+    var p = document.getElementById("pg3");
+    return { x: 23.5, y: p.offsetTop + 6, w: 851, h: 851 * 1536 / 3584 };
+  }
+
   var SLIDE_LABELS = [
-    "1 · Title & abstract",
-    "2 · MetLife figures",
-    "3 · Photo book · 1",
-    "4 · Photo book · 2",
-    "5 · Photo book · 3",
-    "6 · Photo book · 4",
-    "7 · Closing / section 3"
+    "1 · Opening",
+    "2 · Title & abstract",
+    "3 · MetLife figures",
+    "4 · Photo book · 1",
+    "5 · Photo book · 2",
+    "6 · Photo book · 3",
+    "7 · Photo book · 4",
+    "8 · Section 3",
+    "9 · Closing"
   ];
   var SLIDES = [
-    { region: function () { return { x: 23.5, y: 6, w: 851, h: 365 }; },   // top of page 1, same 7:3 frame as slide 2; names stay in the top 2/3
-      onArrive: playTitleHighlight },
-    { region: function () { var r = rectOf(fig); return { x: r.x, y: r.y - 4, w: r.w, h: r.w * 1536 / 3584 }; },                                   // Figure 1 on page 2
+    // Static open bumper (full-stage card; camera parked on title region underneath)
+    {
+      region: titleRegion,
+      onArrive: function () { setBumper(bumperOpen, true); },
+      onLeave: function () { setBumper(bumperOpen, false); }
+    },
+    {
+      region: titleRegion,
+      onArrive: playTitleHighlight
+    },
+    {
+      region: function () { var r = rectOf(fig); return { x: r.x, y: r.y - 4, w: r.w, h: r.w * 1536 / 3584 }; },
       onArrive: function () { fig.classList.add("on"); },
-      onLeave:  function () { fig.classList.remove("on"); } },
-    // Flip book (after the MetLife figures): one step per photo, all sharing one camera frame
-    { book: 1, region: bookRegion }, { book: 2, region: bookRegion }, { book: 3, region: bookRegion }, { book: 4, region: bookRegion },
-    // Back on the paper: top of page 3 (placeholder frame until the next visual is built)
-    { book: 0, region: function () { var p = document.getElementById("pg3"); return { x: 23.5, y: p.offsetTop + 6, w: 851, h: 851 * 1536 / 3584 }; } }
+      onLeave: function () { fig.classList.remove("on"); }
+    },
+    { book: 1, region: bookRegion },
+    { book: 2, region: bookRegion },
+    { book: 3, region: bookRegion },
+    { book: 4, region: bookRegion },
+    { book: 0, region: closingRegion },
+    // Static close bumper
+    {
+      region: closingRegion,
+      onArrive: function () { setBumper(bumperClose, true); },
+      onLeave: function () { setBumper(bumperClose, false); }
+    }
   ];
   // Tight crop on the open right-hand photo page so the image reads large on the LED
   function bookRegion() {
@@ -751,7 +907,8 @@
     pagesRaf = active ? requestAnimationFrame(pagesStep) : null;
   }
 
-  var PAGES_AT = [0, 1, 1, 1, 1, 1, 2];   // pages turned at each slide (slide 2 turns page 1, slide 7 turns page 2)
+  // Pages turned at each slide (open+title share pg1; figures+book share after turn 1; section3+close share after turn 2)
+  var PAGES_AT = [0, 0, 1, 1, 1, 1, 1, 2, 2];
   function schedulePages(prev, i) {
     var pg = PAGES_AT[prev], g = PAGES_AT[i];
     if (pg === g) return;
@@ -965,8 +1122,11 @@
     document.body.dataset.slide = idx;
     layoutBook(); setBook(SLIDES[idx].book || 0, { instant: true }); setPages(PAGES_AT[idx], { instant: true });
     cam = target(idx); render();
-    if (SLIDES[idx].onArrive) setTimeout(SLIDES[idx].onArrive, 300);
-    else if (idx === 0) setTimeout(playTitleHighlight, 300);
+    if (SLIDES[idx].onArrive) {
+      // Bumpers should appear immediately; paper effects can wait a beat
+      if (idx === 0 || idx === SLIDES.length - 1) SLIDES[idx].onArrive();
+      else setTimeout(SLIDES[idx].onArrive, 300);
+    }
     notifyDeckState();
   }
 
