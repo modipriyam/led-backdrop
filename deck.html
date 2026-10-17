@@ -5,29 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Factors Affecting Success Beyond Talent and Opportunity</title>
 <style>
+  /* Dark is the default look; light mode is the opt-in override */
   :root {
-    --desk: #1a2230;
-    --paper: #D5D8DE;
-    --ink: #0E1116;
-    --navy: #152033;
-    --crimson: #7A1524;
-    --slate: #2F3A4A;
-    --mist: #5A6575;
-    --card: #C2C6CE;
-    --rule: #9AA1AB;
-    --muted: #3A4250;
-    --muted-2: #2F3744;
-    --chart-navy: #2B3A55;
-    --chart-crimson: #8C1D2F;
-    --chart-mist: #A9B4C8;
-    --serif: Cambria, "Noto Serif", Georgia, "Times New Roman", serif;
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
-  /* ON AIR click → dark paper + greyish desk/surround above & around the page */
-  :root[data-theme="dark"] {
     --desk: #7A808A;
     --paper: #1A1F28;
     --ink: #F4F7FC;
@@ -42,18 +21,36 @@
     --chart-navy: #8BBBFF;
     --chart-crimson: #FF9AA6;
     --chart-mist: #B8C6DA;
+    --serif: Cambria, "Noto Serif", Georgia, "Times New Roman", serif;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  :root[data-theme="light"] {
+    --desk: #1a2230;
+    --paper: #D5D8DE;
+    --ink: #0E1116;
+    --navy: #152033;
+    --crimson: #7A1524;
+    --slate: #2F3A4A;
+    --mist: #5A6575;
+    --card: #C2C6CE;
+    --rule: #9AA1AB;
+    --muted: #3A4250;
+    --muted-2: #2F3744;
+    --chart-navy: #2B3A55;
+    --chart-crimson: #8C1D2F;
+    --chart-mist: #A9B4C8;
   }
 
   html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
   body {
     margin: 0; height: 100%; overflow: hidden;
-    background: #121820;
+    background: var(--desk);
     font-family: var(--serif); color: var(--ink);
     -webkit-user-select: none; user-select: none;
     transition: color 0.35s ease, background-color 0.35s ease;
-  }
-  :root[data-theme="dark"] body {
-    background: var(--desk);
   }
   .pg, .pg-back, .pg-proxy, #fade {
     transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
@@ -208,12 +205,9 @@
   #desk {
     position: absolute; left: -4000px; top: -2200px; width: 8900px; height: 9400px;
     background-color: var(--desk);
-    background-image: var(--surface, none);
+    background-image: none; /* flat surround — area above/around the page */
     background-size: 1024px 1024px;
     transition: background-color 0.35s ease;
-  }
-  :root[data-theme="dark"] #desk {
-    background-image: none; /* flat grey surround — reads as the area above/around the page */
   }
 
   /* ---------- Sheets of paper (A4 ratio) on the desk ---------- */
@@ -224,9 +218,9 @@
   }
   /* The pages are one pile, page 1 on top. Next turns the top page to the left, revealing the one beneath. */
   #pg1, #pg2, #pg3 { top: 0; transform-origin: 0 0; }
-  #pg3 { box-shadow: 1px 1px 0 #c4c8d0, 2px 2px 0 #aeb3bc, 3px 3px 0 #c4c8d0, 4px 4px 0 #aeb3bc, 0 6px 16px rgba(0,0,0,.4); }
-  :root[data-theme="dark"] #pg3 {
-    box-shadow: 1px 1px 0 #2a3340, 2px 2px 0 #1a222c, 3px 3px 0 #2a3340, 4px 4px 0 #1a222c, 0 6px 16px rgba(0,0,0,.55);
+  #pg3 { box-shadow: 1px 1px 0 #2a3340, 2px 2px 0 #1a222c, 3px 3px 0 #2a3340, 4px 4px 0 #1a222c, 0 6px 16px rgba(0,0,0,.55); }
+  :root[data-theme="light"] #pg3 {
+    box-shadow: 1px 1px 0 #c4c8d0, 2px 2px 0 #aeb3bc, 3px 3px 0 #c4c8d0, 4px 4px 0 #aeb3bc, 0 6px 16px rgba(0,0,0,.4);
   }
   .pg-back { position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: var(--paper); opacity: 0; z-index: 30; }
   .pg-proxy { position: absolute; left: 0; top: 0; width: 900px; height: 1273px; background: var(--paper); transform-origin: 0 0; box-shadow: 0 0 0 1px rgba(0,0,0,.14); visibility: hidden; }
@@ -244,12 +238,12 @@
   #title .hl {
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    color: inherit;
+    color: #10141c;
     background-image: linear-gradient(
       180deg,
       transparent 8%,
-      rgba(255, 224, 50, 0.72) 8%,
-      rgba(255, 214, 0, 0.78) 92%,
+      rgba(255, 230, 80, 0.92) 8%,
+      rgba(255, 220, 40, 0.95) 92%,
       transparent 92%
     );
     background-repeat: no-repeat;
@@ -260,14 +254,13 @@
   #title .hl.is-on {
     animation: title-hl 1.35s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
   }
-  /* Dark mode: keep ink dark on the yellow marker so the title stays readable */
-  :root[data-theme="dark"] #title .hl {
-    color: #10141c;
+  :root[data-theme="light"] #title .hl {
+    color: inherit;
     background-image: linear-gradient(
       180deg,
       transparent 8%,
-      rgba(255, 230, 80, 0.92) 8%,
-      rgba(255, 220, 40, 0.95) 92%,
+      rgba(255, 224, 50, 0.72) 8%,
+      rgba(255, 214, 0, 0.78) 92%,
       transparent 92%
     );
   }
@@ -344,10 +337,10 @@
   .card {
     position: absolute; top: 30px; width: 238px; height: 192px;
     background: var(--card); border-radius: 10px;
-    box-shadow: inset 0 0 0 1px var(--rule);
-  }
-  :root[data-theme="dark"] .card {
     box-shadow: inset 0 0 0 1px rgba(180, 200, 230, 0.22);
+  }
+  :root[data-theme="light"] .card {
+    box-shadow: inset 0 0 0 1px var(--rule);
   }
   .big {
     position: absolute; left: 0; top: 4px; width: 100%; height: 50px;
@@ -966,6 +959,7 @@
   }
 
   function start() {
+    document.documentElement.setAttribute("data-theme", "dark");
     var n = parseInt(location.hash.slice(1), 10);
     idx = (n >= 1 && n <= SLIDES.length) ? n - 1 : 0;
     document.body.dataset.slide = idx;

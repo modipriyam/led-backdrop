@@ -731,7 +731,7 @@
       <div id="screen">
         <div id="stage">
           <div id="boot-scan" aria-hidden="true"></div>
-          <iframe id="deck" src="deck.html" title="Paper deck" allowfullscreen></iframe>
+          <iframe id="deck" src="deck.html?v=dark2" title="Paper deck" allowfullscreen></iframe>
           <div id="glass" aria-hidden="true"></div>
         </div>
       </div>
@@ -762,6 +762,7 @@
       var bus = null;
       try { bus = new BroadcastChannel("ice-sugar-led"); } catch (err) { bus = null; }
       var useRelay = false;
+      syncOnAir(true); // dark mode is the default before the iframe reports in
 
       function enableRelay() {
         if (useRelay || !window.LedBus) return;
