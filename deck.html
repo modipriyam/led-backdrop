@@ -465,6 +465,18 @@
     color: rgba(235, 242, 255, 0.95);
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
+
+  @media (max-width: 720px) {
+    .bumper .mark {
+      font-size: clamp(2.2rem, 11vw, 3.6rem);
+    }
+    .bumper .tagline {
+      font-size: clamp(0.95rem, 3.8vw, 1.25rem);
+    }
+    .bumper .authors {
+      font-size: clamp(1.15rem, 4.6vw, 1.7rem);
+    }
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1201,6 +1213,30 @@
   });
   // Left half = previous, right half = next (clearer for presenters / audience cues)
   addEventListener("click", function (e) { go(e.clientX < W * 0.5 ? idx - 1 : idx + 1); });
+
+  // Phone: swipe left = next, swipe right = previous
+  var touchX0 = null, touchY0 = null, touchIgnoreClick = false;
+  addEventListener("touchstart", function (e) {
+    if (!e.changedTouches || !e.changedTouches[0]) return;
+    touchX0 = e.changedTouches[0].clientX;
+    touchY0 = e.changedTouches[0].clientY;
+    touchIgnoreClick = false;
+  }, { passive: true });
+  addEventListener("touchend", function (e) {
+    if (touchX0 == null || !e.changedTouches || !e.changedTouches[0]) return;
+    var dx = e.changedTouches[0].clientX - touchX0;
+    var dy = e.changedTouches[0].clientY - touchY0;
+    touchX0 = null;
+    touchY0 = null;
+    if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+    touchIgnoreClick = true;
+    go(idx + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+  addEventListener("click", function (e) {
+    if (!touchIgnoreClick) return;
+    touchIgnoreClick = false;
+    e.stopImmediatePropagation();
+  }, true);
 
   addEventListener("resize", function () {
     W = innerWidth; H = innerHeight;
